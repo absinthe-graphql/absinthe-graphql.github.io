@@ -61,6 +61,14 @@
     
       <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
     
+      <li><a href='/guides/introspection/'>Introspection</a></li>
+    
+      <li><a href='/guides/deprecation/'>Deprecation</a></li>
+    
+      <li><a href='/guides/variables/'>Variables</a></li>
+    
+      <li><a href='/guides/adapters/'>Adapters</a></li>
+    
   </ol>
 </nav>
 
@@ -146,7 +154,9 @@ like:</p>
 
 <p>Absinthe.Plug will pass any values found inside <code>conn.private[:absinthe][:context]</code>
 on to <code>Absinthe.run</code> as the context. This is how you should handle logic that
-uses headers and so on. For more information, see the <a href="context/">Context guide</a>.</p>
+uses headers – most notably, Authentication.</p>
+
+<p>For more information, see the <a href="context/">Context guide</a>.</p>
 
 <h2 id="general-usage">General Usage</h2>
 
@@ -167,14 +177,13 @@ we recommend using one of the POST options below instead, putting the <code>quer
 
 <p>With a POST body:</p>
 
-<p><code>
-{
-  "query": "query GetItem($id: ID!) { item(id: $id) { name } }",
-  "variables": {
-    "id": "foo"
-  }
-}
-</code></p>
+<figure class="codeblock"><pre><code class="language-json highlight"><span class="p">{</span><span class="w">
+  </span><span class="nt">"query"</span><span class="p">:</span><span class="w"> </span><span class="s2">"query GetItem($id: ID!) { item(id: $id) { name } }"</span><span class="p">,</span><span class="w">
+  </span><span class="nt">"variables"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span></code></pre>
+</figure>
 
 <p>(We could also pull either <code>query</code> or <code>variables</code> out to the query string, just
 as in the <a href="./README.md#via-a-get">GET example</a>.)</p>
@@ -187,13 +196,12 @@ as in the <a href="./README.md#via-a-get">GET example</a>.)</p>
 
 <p>And a POST body:</p>
 
-<p><code>
-query GetItem($id: ID!) {
-  item(id: $id) {
-    name
-  }
-}
-</code></p>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">query</span> <span class="n">GetItem</span><span class="err">($</span><span class="ss">id:</span> <span class="n">ID!</span><span class="err">)</span> <span class="err">{</span>
+  <span class="n">item</span><span class="err">(</span><span class="ss">id:</span> <span class="err">$</span><span class="n">id</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">name</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+</figure>
 
 <h3 id="http-api">HTTP API</h3>
 

@@ -3,7 +3,7 @@
 
   <head>
   <meta charset="utf-8">
-  <title>Guide Index</title>
+  <title>Deprecation</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <!-- ok >
@@ -51,7 +51,7 @@
   <p class="page-navigation-header">guides</p>
   <ol>
     
-      <li><a href='/guides/' class="active">Guide Index</a></li>
+      <li><a href='/guides/'>Guide Index</a></li>
     
       <li><a href='/guides/writing-schemas/'>Writing Schemas</a></li>
     
@@ -63,7 +63,7 @@
     
       <li><a href='/guides/introspection/'>Introspection</a></li>
     
-      <li><a href='/guides/deprecation/'>Deprecation</a></li>
+      <li><a href='/guides/deprecation/' class="active">Deprecation</a></li>
     
       <li><a href='/guides/variables/'>Variables</a></li>
     
@@ -75,14 +75,50 @@
 
     <article>
       <header>
-        <h1>Guide Index</h1>
+        <h1>Deprecation</h1>
       </header>
       
-<p>To the left you’ll find a list of guides that we hope you’ll find useful
-in helping you understand and use Absinthe.</p>
+<p>Use the <code>deprecate</code> option when defining any field, argument, or enum value.</p>
 
-<p>Contribution of new guides – and errata for those existing – are welcomed
-at the <a href="https://github.com/absinthe-graphql/website">website repository</a>.</p>
+<ul>
+  <li>Provide a binary value to give a deprecation reason</li>
+  <li>Provide <code>true</code> to just mark it as deprecated</li>
+</ul>
+
+<p>An example:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:item</span><span class="p">,</span> <span class="ss">:item</span> <span class="k">do</span>
+    <span class="n">arg</span> <span class="ss">:id</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
+    <span class="n">arg</span> <span class="ss">:oldId</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">),</span> <span class="ss">deprecate:</span> <span class="sd">"</span><span class="s2">It's old."</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="p">%{</span><span class="ss">id:</span> <span class="n">item_id</span><span class="p">},</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="nv">@items</span><span class="p">[</span><span class="n">item_id</span><span class="p">]}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>You can also use the <code>deprecate</code> as a macro inside a block, for instance:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">field</span> <span class="ss">:age</span><span class="p">,</span> <span class="ss">:integer</span> <span class="k">do</span>
+  <span class="n">deprecate</span>
+  <span class="n">arg</span> <span class="ss">:user_id</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Just marking as deprecated.</figcaption>
+</figure>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">field</span> <span class="ss">:ssn</span><span class="p">,</span> <span class="ss">:string</span> <span class="k">do</span>
+  <span class="n">deprecate</span> <span class="sd">"</span><span class="s2">Privacy concerns"</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Giving a reason.</figcaption>
+</figure>
+
+<p class="warning">
+At the current time, Absinthe reports any deprecated argument or
+deprecated input object field used in the <code>errors</code> entry of the
+result. Non-null constraints are ignored when validating deprecated arguments and
+input object fields.
+</p>
 
     </article>
 

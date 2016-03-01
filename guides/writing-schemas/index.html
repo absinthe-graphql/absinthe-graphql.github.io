@@ -61,6 +61,14 @@
     
       <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
     
+      <li><a href='/guides/introspection/'>Introspection</a></li>
+    
+      <li><a href='/guides/deprecation/'>Deprecation</a></li>
+    
+      <li><a href='/guides/variables/'>Variables</a></li>
+    
+      <li><a href='/guides/adapters/'>Adapters</a></li>
+    
   </ol>
 </nav>
 
@@ -125,8 +133,8 @@ we need to define ourselves.</p>
 <p>We can do it in the same <code>MyApp.Schema</code> module, using the <code>object</code> macro defined by <code>Absinthe.Schema.Notation</code>:</p>
 
 <figure class="codeblock"><figcaption class="filename">myapp/schema.ex</figcaption>
-<pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:item</span> <span class="k">do</span>
-  <span class="n">description</span> <span class="sd">"</span><span class="s2">An item"</span>
+<pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"</span><span class="s2">An item"</span>
+<span class="n">object</span> <span class="ss">:item</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:id</span>
   <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
 <span class="k">end</span></code></pre>

@@ -3,7 +3,7 @@
 
   <head>
   <meta charset="utf-8">
-  <title>Guide Index</title>
+  <title>Adapters</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <!-- ok >
@@ -51,7 +51,7 @@
   <p class="page-navigation-header">guides</p>
   <ol>
     
-      <li><a href='/guides/' class="active">Guide Index</a></li>
+      <li><a href='/guides/'>Guide Index</a></li>
     
       <li><a href='/guides/writing-schemas/'>Writing Schemas</a></li>
     
@@ -67,7 +67,7 @@
     
       <li><a href='/guides/variables/'>Variables</a></li>
     
-      <li><a href='/guides/adapters/'>Adapters</a></li>
+      <li><a href='/guides/adapters/' class="active">Adapters</a></li>
     
   </ol>
 </nav>
@@ -75,14 +75,50 @@
 
     <article>
       <header>
-        <h1>Guide Index</h1>
+        <h1>Adapters</h1>
       </header>
       
-<p>To the left you’ll find a list of guides that we hope you’ll find useful
-in helping you understand and use Absinthe.</p>
+<p>Absinthe supports an adapter mechanism that allows developers to define their
+schema using one code convention (eg, <code>snake_cased</code> fields and arguments), but
+accept query documents and return results (including names in errors) in
+another (eg, <code>camelCase</code>). This is useful in allowing both client and server to
+use conventions most natural to them.</p>
 
-<p>Contribution of new guides – and errata for those existing – are welcomed
-at the <a href="https://github.com/absinthe-graphql/website">website repository</a>.</p>
+<p>Absinthe ships with two adapters:</p>
+
+<ul>
+  <li>
+<code>Absinthe.Adapter.LanguageConventions</code>, which expects schemas to be defined
+in <code>snake_case</code> (the standard Elixir convention), translating to/from <code>camelCase</code>
+for incoming query documents and outgoing results. (This is the default as of v0.3.)</li>
+  <li>
+<code>Absinthe.Adapter.Passthrough</code>, which is a no-op adapter and makes no
+modifications.</li>
+</ul>
+
+<p>To set the adapter, you can set an application configuration value:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">config</span> <span class="ss">:absinthe</span><span class="p">,</span>
+  <span class="ss">adapter:</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Adapter</span><span class="o">.</span><span class="no">TheAdapterName</span></code></pre>
+</figure>
+
+<p>Or, you can provide it as an option to <code>Absinthe.run/3</code>:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">query</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">,</span>
+             <span class="ss">adapter:</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Adapter</span><span class="o">.</span><span class="no">TheAdapterName</span><span class="p">)</span></code></pre>
+</figure>
+
+<p>Notably, this means you’re able to switch adapters on case-by-case basis.
+In a Phoenix application, this means you could even support using different
+adapters for different clients.</p>
+
+<p>A custom adapter module must merely implement the <code>Absinthe.Adapter</code> protocol,
+in many cases with <code>use Absinthe.Adapter</code> and only overriding the desired
+functions.</p>
+
+<p>Note that types that are defined external to your application (including
+the introspection types) may not be compatible if you’re using a different
+adapter.</p>
 
     </article>
 

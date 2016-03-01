@@ -1,0 +1,207 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <title>Introspection</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- ok >
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="Nanoc 4.1.4">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <script src="/js/main.js"></script>
+</head>
+
+
+<body class="preload markdown-body collection">
+
+  <header id="page-header" role="banner">
+  <a href="/"><h1 class="logo">Absinthe</h1></a>
+  <nav id="main-navigation">
+  <ol>
+    <li><a href='/learning-graphql/'>GraphQL?</a></li>
+    <li><a href='/tutorial/'>Tutorial</a></li>
+    <li><a href='/guides/' class="active">Guides</a></li>
+    <li><a href='/community/'>Community</a></li>
+    <li><a href='/projects/'>Projects</a></li>
+    <li>
+      <a class="icon-link" target="github" href="https://github.com/absinthe-graphql">
+        <svg aria-hidden="true" height="28" role="img" version="1.1" viewBox="0 0 16 16" width="28"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
+      </a>
+    </li>
+  </ol>
+</nav>
+
+</header>
+
+
+  <main id="main">
+    <nav id="page-navigation">
+  <p class="page-navigation-header">guides</p>
+  <ol>
+    
+      <li><a href='/guides/'>Guide Index</a></li>
+    
+      <li><a href='/guides/writing-schemas/'>Writing Schemas</a></li>
+    
+      <li><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
+    
+      <li><a href='/guides/context/'>Context</a></li>
+    
+      <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
+    
+      <li><a href='/guides/introspection/' class="active">Introspection</a></li>
+    
+      <li><a href='/guides/deprecation/'>Deprecation</a></li>
+    
+      <li><a href='/guides/variables/'>Variables</a></li>
+    
+      <li><a href='/guides/adapters/'>Adapters</a></li>
+    
+  </ol>
+</nav>
+
+
+    <article>
+      <header>
+        <h1>Introspection</h1>
+      </header>
+      
+<p>You can introspect your schema using <code>__schema</code>, <code>__type</code>, and <code>__typename</code>,
+as <a href="https://facebook.github.io/graphql/#sec-Introspection">described in the specification</a>.</p>
+
+<h3 id="examples">Examples</h3>
+
+<p>Seeing the names of the types in the schema:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="sd">"""
+{
+  __schema {
+    types {
+      name
+    }
+  }
+}
+"""</span>
+<span class="o">|&gt;</span> <span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:ok</span><span class="p">,</span>
+  <span class="p">%{</span><span class="ss">data:</span> <span class="p">%{</span>
+    <span class="sd">"</span><span class="s2">__schema"</span> <span class="o">=&gt;</span> <span class="p">%{</span>
+      <span class="sd">"</span><span class="s2">types"</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">%{</span><span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Boolean"</span><span class="p">},</span>
+        <span class="p">%{</span><span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Float"</span><span class="p">},</span>
+        <span class="p">%{</span><span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">ID"</span><span class="p">},</span>
+        <span class="p">%{</span><span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Int"</span><span class="p">},</span>
+        <span class="p">%{</span><span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">String"</span><span class="p">},</span>
+        <span class="o">...</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}}</span>
+<span class="p">}</span></code></pre>
+</figure>
+
+<p>Getting the name of the queried type:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="sd">"""
+{
+  profile {
+    name
+    __typename
+  }
+}
+"""</span>
+<span class="o">|&gt;</span> <span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:ok</span><span class="p">,</span>
+  <span class="p">%{</span><span class="ss">data:</span> <span class="p">%{</span>
+    <span class="sd">"</span><span class="s2">profile"</span> <span class="o">=&gt;</span> <span class="p">%{</span>
+      <span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Joe"</span><span class="p">,</span>
+      <span class="sd">"</span><span class="s2">__typename"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Person"</span>
+    <span class="p">}</span>
+  <span class="p">}}</span>
+<span class="p">}</span></code></pre>
+</figure>
+
+<p>Getting the name of the fields for a named type:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="sd">"""
+{
+  __type(name: "Person") {
+    fields {
+      name
+      type {
+        kind
+        name
+      }
+    }
+  }
+}
+"""</span>
+<span class="o">|&gt;</span> <span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">)</span>
+<span class="p">{</span><span class="ss">:ok</span><span class="p">,</span>
+  <span class="p">%{</span><span class="ss">data:</span> <span class="p">%{</span>
+    <span class="sd">"</span><span class="s2">__type"</span> <span class="o">=&gt;</span> <span class="p">%{</span>
+      <span class="sd">"</span><span class="s2">fields"</span> <span class="o">=&gt;</span> <span class="p">[</span>
+        <span class="p">%{</span>
+          <span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">name"</span><span class="p">,</span>
+          <span class="sd">"</span><span class="s2">type"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">kind"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">SCALAR"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">String"</span><span class="p">}</span>
+        <span class="p">},</span>
+        <span class="p">%{</span>
+          <span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">age"</span><span class="p">,</span>
+          <span class="sd">"</span><span class="s2">type"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="sd">"</span><span class="s2">kind"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">SCALAR"</span><span class="p">,</span> <span class="sd">"</span><span class="s2">name"</span> <span class="o">=&gt;</span> <span class="sd">"</span><span class="s2">Int"</span><span class="p">}</span>
+        <span class="p">},</span>
+      <span class="p">]</span>
+    <span class="p">}</span>
+  <span class="p">}}</span>
+<span class="p">}</span></code></pre>
+</figure>
+
+<p class="warning">
+Note that you may have to nest several depths of <code>type</code>/<code>ofType</code>, as
+type information includes any wrapping layers of <a href="https://facebook.github.io/graphql/#sec-List">List</a>
+and/or <a href="https://facebook.github.io/graphql/#sec-Non-null">NonNull</a>.
+</p>
+
+<h2 id="using-graphiql">Using GraphiQL</h2>
+
+<p>The <a href="https://github.com/graphql/graphiql">GraphiQL project</a> is
+“an in-browser IDE for exploring GraphQL.”</p>
+
+<figure>
+  <img src="/img/graphiql.png">
+  <figcaption class="description">GraphiQL in action.</figcaption>
+</figure>
+
+<p class="notice">
+We recommend using the pre-built <a href="http://electron.atom.io/">Electron</a>-based wrapper application, <a href="https://github.com/skevy/graphiql-app">GraphiQL.app</a>, which makes it very easy to introspect your
+development and production Absinthe applications.
+</p>
+
+<h3 id="graphql-hub">GraphQL Hub</h3>
+
+<p><a href="https://www.graphqlhub.com/">GraphQL Hub</a> is an interesting website that you
+can use to introspect a number of public GraphQL servers, using GraphiQL in the
+browser and providing useful examples.</p>
+
+    </article>
+
+  </main>
+
+  <footer id="page-footer">
+  <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
+</footer>
+
+
+</body>
+</html>
