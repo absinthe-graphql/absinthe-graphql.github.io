@@ -1,0 +1,272 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <title>Plug and Phoenix</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- ok >
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="Nanoc 4.1.4">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <script src="/js/main.js"></script>
+</head>
+
+
+<body class="preload markdown-body collection">
+
+  <header id="page-header" role="banner">
+  <a href="/"><h1 class="logo">Absinthe</h1></a>
+  <nav id="main-navigation">
+  <ol>
+    <li><a href='/learning-graphql/'>GraphQL?</a></li>
+    <li><a href='/tutorial/'>Tutorial</a></li>
+    <li><a href='/guides/' class="active">Guides</a></li>
+    <li><a href='/projects/'>Projects</a></li>
+    <li>
+      <a class="icon-link" target="github" href="https://github.com/absinthe-graphql">
+        <svg aria-hidden="true" height="28" role="img" version="1.1" viewBox="0 0 16 16" width="28"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
+      </a>
+    </li>
+  </ol>
+</nav>
+
+</header>
+
+
+  <main id="main">
+    <nav id="page-navigation">
+  <p class="page-navigation-header">guides</p>
+  <ol>
+    
+      <li><a href='/guides/'>Guide Index</a></li>
+    
+      <li><a href='/guides/plug-phoenix/' class="active">Plug and Phoenix</a></li>
+    
+      <li><a href='/guides/context/'>Context</a></li>
+    
+      <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
+    
+  </ol>
+</nav>
+
+
+    <article>
+      <header>
+        <h1>Plug and Phoenix</h1>
+      </header>
+      <h2 id="getting-started">Getting Started</h2>
+
+<p>Using Absinthe with Plug and Phoenix is very easy. First install Absinthe.Plug,
+and a JSON codec of your choice. Absinthe.Plug defaults to Poison.</p>
+
+<pre><code class="language-elixir highlight"><span class="k">def</span> <span class="n">deps</span> <span class="k">do</span>
+  <span class="p">[</span>
+    <span class="p">{</span><span class="ss">:absinthe_plug</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 1.0.0"</span><span class="p">},</span>
+    <span class="p">{</span><span class="ss">:poison</span><span class="p">,</span> <span class="sd">"</span><span class="s2">~&gt; 2.1.0"</span><span class="p">},</span>
+  <span class="p">]</span>
+<span class="k">end</span></code></pre>
+
+<h2 id="plug">Plug</h2>
+
+<p>To use, simply <code>plug</code> Absinthe.Plug in your pipeline.</p>
+
+<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+  <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+
+<p>If you are going to support content types other than simply <code>application/graphql</code>
+you should plug Absinthe.Plug after Plug.Parsers.</p>
+
+<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
+  <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
+  <span class="ss">pass:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">*/*"</span><span class="p">],</span>
+  <span class="ss">json_decoder:</span> <span class="no">Poison</span>
+
+<span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+  <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+
+<p>For more information on how the content types work, see General Usage</p>
+
+<h2 id="phoenix">Phoenix</h2>
+
+<p>If your entire API is going to be based on GraphQL, we recommend simply plugging
+Absinthe.Plug in at the bottom of your endpoint, and removing your router altogether.</p>
+
+<p>Here’s a sample Endpoint configured in this way:</p>
+
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Endpoint</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Endpoint</span><span class="p">,</span> <span class="ss">otp_app:</span> <span class="ss">:my_app</span>
+
+  <span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">RequestId</span>
+  <span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Logger</span>
+
+  <span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
+    <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
+    <span class="ss">pass:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">*/*"</span><span class="p">],</span>
+    <span class="ss">json_decoder:</span> <span class="no">Poison</span>
+
+  <span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+    <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span>
+<span class="k">end</span></code></pre>
+
+<p>If you want only Absinthe.Plug to serve a particular route, configure your router
+in a fashion similar to:</p>
+
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span>
+
+  <span class="n">resource</span> <span class="sd">"</span><span class="s2">/pages"</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">PagesController</span>
+
+  <span class="n">forward</span> <span class="sd">"</span><span class="s2">/api"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+    <span class="ss">schema:</span> <span class="no">Fractalsense</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Schema</span>
+<span class="k">end</span></code></pre>
+
+<p>Now Absinthe.Plug will only serve GraphQL from the <code>/api</code> url.</p>
+
+<h2 id="absinthe-context">Absinthe Context</h2>
+
+<p>Absinthe.Plug will pass any values found inside <code>conn.private[:absinthe][:context]</code>
+on to <code>Absinthe.run</code> as the context. This is how you should handle logic that
+uses headers and so on. For more information, see the Context guide.</p>
+
+<h2 id="general-usage">General Usage</h2>
+<p>This plug supports requests in a number of ways:</p>
+
+<h3 id="via-a-get">Via a GET</h3>
+
+<p>With a query string:</p>
+
+<p><code>
+?query=query+GetItem($id:ID!){item(id:$id){name}}&amp;variables={id:"foo"}
+</code></p>
+
+<p>Due to <a href="http://stackoverflow.com/questions/417142/what-is-the-maximum-length-of-a-url-in-different-browsers">varying limits on the maximum size of URLs</a>,
+we recommend using one of the POST options below instead, putting the <code>query</code> into the body of the request.</p>
+
+<h3 id="via-an-applicationjson-post">Via an <code>application/json</code> POST</h3>
+
+<p>With a POST body:</p>
+
+<p><code>
+{
+  "query": "query GetItem($id: ID!) { item(id: $id) { name } }",
+  "variables": {
+    "id": "foo"
+  }
+}
+</code></p>
+
+<p>(We could also pull either <code>query</code> or <code>variables</code> out to the query string, just
+as in the <a href="./README.md#via-a-get">GET example</a>.)</p>
+
+<h3 id="via-an-applicationgraphql-post">Via an <code>application/graphql</code> POST</h3>
+
+<p>With a query string:</p>
+
+<p><code>?variables={id:"foo"}</code></p>
+
+<p>And a POST body:</p>
+
+<p><code>
+query GetItem($id: ID!) {
+  item(id: $id) {
+    name
+  }
+}
+</code></p>
+
+<h3 id="http-api">HTTP API</h3>
+
+<p>How clients interact with the plug over HTTP is designed to closely match that
+of the official
+<a href="https://github.com/graphql/express-graphql">express-graphql</a> middleware.</p>
+
+<p>In the <a href="./README.md#example">example above</a>, we went over the various ways to
+make a request, but here are the details:</p>
+
+<p>Once installed at a path, the plug will accept requests with the
+following parameters:</p>
+
+<ul>
+  <li>
+    <p><code>query</code> - A string GraphQL document to be executed.</p>
+  </li>
+  <li>
+    <p><code>variables</code> - The runtime values to use for any GraphQL query variables
+as a JSON object.</p>
+  </li>
+  <li>
+    <p><code>operationName</code> - If the provided <code>query</code> contains multiple named
+operations, this specifies which operation should be executed. If not
+provided, a 400 error will be returned if the <code>query</code> contains multiple
+named operations.</p>
+  </li>
+</ul>
+
+<p>The plug will first look for each parameter in the query string, eg:</p>
+
+<p><code>
+/graphql?query=query+getUser($id:ID){user(id:$id){name}}&amp;variables={"id":"4"}
+</code></p>
+
+<p>If not found in the query string, it will look in the POST request body, using
+a strategy based on the <code>Content-Type</code> header.</p>
+
+<p>For content types <code>application/json</code> and <code>application/x-www-form-urlencoded</code>,
+configure <code>Plug.Parsers</code> (or equivalent) to parse the request body before <code>Absinthe.Plug</code>, eg:</p>
+
+<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
+  <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
+  <span class="ss">pass:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">*/*"</span><span class="p">],</span>
+  <span class="ss">json_decoder:</span> <span class="no">Poison</span></code></pre>
+
+<p>For <code>application/graphql</code>, the POST body will be parsed as GraphQL query string,
+which provides the <code>query</code> parameter. If <code>variables</code> or <code>operationName</code> are
+needed, they should be passed as part of the</p>
+
+<h2 id="configuration-notes">Configuration Notes</h2>
+
+<p>As a plug, <code>Absinthe.Plug</code> requires very little configuration. If you want to support
+<code>application/x-www-form-urlencoded</code> or <code>application/json</code> you’ll need to plug
+<code>Plug.Parsers</code> first.</p>
+
+<p>Here is an example plug module.</p>
+
+<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
+  <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
+  <span class="ss">pass:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">*/*"</span><span class="p">],</span>
+  <span class="ss">json_decoder:</span> <span class="no">Poison</span>
+
+<span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+  <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Linen</span><span class="o">.</span><span class="no">Schema</span><span class="p">,</span>
+  <span class="ss">adapter:</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Adapter</span><span class="o">.</span><span class="no">LanguageConventions</span></code></pre>
+
+<p><code>Absinthe.Plug</code> requires a <code>schema:</code> config. The <code>LanguageConventions</code> adapter
+allows you to use <code>snake_case_names</code> in your schema while still accepting and
+returning <code>camelCaseNames</code>.</p>
+
+<p>It also takes several options. See <a href="https://hexdocs.pm/absinthe_plug/Absinthe.Plug.html#init/1">the documentation</a>
+for the full listing.</p>
+
+    </article>
+
+  </main>
+
+  <footer id="page-footer">
+  <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+</footer>
+
+
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <title>Custom Scalars</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- ok >
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="Nanoc 4.1.4">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <script src="/js/main.js"></script>
+</head>
+
+
+<body class="preload markdown-body collection">
+
+  <header id="page-header" role="banner">
+  <a href="/"><h1 class="logo">Absinthe</h1></a>
+  <nav id="main-navigation">
+  <ol>
+    <li><a href='/learning-graphql/'>GraphQL?</a></li>
+    <li><a href='/tutorial/'>Tutorial</a></li>
+    <li><a href='/guides/' class="active">Guides</a></li>
+    <li><a href='/projects/'>Projects</a></li>
+    <li>
+      <a class="icon-link" target="github" href="https://github.com/absinthe-graphql">
+        <svg aria-hidden="true" height="28" role="img" version="1.1" viewBox="0 0 16 16" width="28"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
+      </a>
+    </li>
+  </ol>
+</nav>
+
+</header>
+
+
+  <main id="main">
+    <nav id="page-navigation">
+  <p class="page-navigation-header">guides</p>
+  <ol>
+    
+      <li><a href='/guides/'>Guide Index</a></li>
+    
+      <li><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
+    
+      <li><a href='/guides/context/'>Context</a></li>
+    
+      <li><a href='/guides/custom-scalars/' class="active">Custom Scalars</a></li>
+    
+  </ol>
+</nav>
+
+
+    <article>
+      <header>
+        <h1>Custom Scalars</h1>
+      </header>
+      
+<p>One of the strengths of GraphQL is its extensibility – which doesn’t end with
+its object types, but is present all the way down to the scalar value level.</p>
+
+<p>Sometimes it makes sense to build custom scalar types to better model your
+domain. Here’s how to do it.</p>
+
+<h2 id="defining-a-scalar">Defining a scalar</h2>
+
+<p>Supporting additional scalar types is as easy as using the <code>scalar</code> macro and
+providing <code>parse</code> and <code>serialize</code> functions.</p>
+
+<p>Here’s a simple scalar definition:</p>
+
+<pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+<span class="k">end</span></code></pre>
+
+<p>This creates a new scalar type, <code>:time</code> that converts between external string
+times in ISOz format and internal <a href="https://github.com/bitwalker/timex">Timex</a>
+structs.</p>
+
+<p class="note">
+ By default, types defined in Absinthe schemas are automatically given TitleCased
+ names for use in GraphQL documents. To give a type a custom name, pass a
+ `:name` option. In this example, our scalar type is automatically assigned `Time`).
+ </p>
+
+<p>This method of definining scalars isn’t anything special, either. It’s exactly
+how the built-in scalars <code>Int</code>, <code>String</code>, <code>Float</code>, <code>ID</code>, and <code>Boolean</code> are defined.</p>
+
+<h3 id="the-parse-function">The parse function</h3>
+
+<p>The function provided to <code>parse</code> takes the raw value from GraphQL and returns a
+tuple – either <code>{:ok, value}</code> or <code>{:error, reason}</code>. Any errors during parsing
+will be returned to the user as part of the response.</p>
+
+<p>In the <code>:time</code> example above, <code>Timex.DateFormat.parse/2</code> handles this for us; we
+just wrap it and provide the date format (`ISOz’).</p>
+
+<h3 id="the-serialize-function">The serialize function</h3>
+
+<p>The function provided to <code>serialize</code> takes the internal value and serializes it
+to the type that will be inserted into the result.</p>
+
+<p>In the <code>:time</code> example above, <code>Time.DateFormat.format!</code> handles us for this,
+serializing it to the same format that <code>parse</code> expects as input.</p>
+
+<h3 id="dont-forget-your-description">Don’t forget your description</h3>
+
+<p>Descriptions are especially useful for scalars, as users may not be familiar
+with the constraints your <code>parse</code> function may place on incoming values.</p>
+
+<p>Be nice and tell them:</p>
+
+<pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"""
+The `Time` scalar type represents time values provided in the ISOz
+datetime format (that is, the ISO 8601 format without the timezone offset, eg,
+"2015-06-24T04:50:34Z").
+"""</span>
+<span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+<span class="k">end</span></code></pre>
+
+<h2 id="as-query-document-variables">As query document variables</h2>
+
+<p>Once you have a scalar type defined, you can use it in <a href="https://facebook.github.io/graphql/#sec-Language.Query-Document.Variables">query document variables</a>,
+just like any other input type.</p>
+
+<p>Here’s a query document that marks a post as read, requiring a non-null <code>Time</code> value:</p>
+
+<pre><code class="language-text highlight">mutation MarkPostAsRead($postID: ID!, $when: Time!) {
+  markRead(id: $postID, readAt: $when)
+}</code></pre>
+
+<h2 id="further-reading">Further reading</h2>
+
+<ul>
+  <li>The <code>scalar</code> macro is defined in <a href="https://hexdocs.pm/absinthe/Absinthe.Schema.Notation.html">Absinthe.Schema.Notation</a>.</li>
+  <li>The built-in scalars are defined in <a href="https://hexdocs.pm/absinthe/Absinthe.Type.BuiltIns.Scalars.html">Absithe.Type.BuiltIns.Scalars</a>.</li>
+</ul>
+
+    </article>
+
+  </main>
+
+  <footer id="page-footer">
+  <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+</footer>
+
+
+</body>
+</html>

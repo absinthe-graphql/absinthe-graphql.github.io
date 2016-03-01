@@ -1,0 +1,1019 @@
+/*  ------------------------------------------------------------------
+  Main.css
+-------------------------------------------------------------------  */
+
+/* Might need ☃
+------------------------------------------------------------------  */
+@charset "UTF-8";
+
+/* Vendor
+------------------------------------------------------------------  */
+/*! normalize.css v3.0.3 | MIT License | github.com/necolas/normalize.css */
+/**
+ * 1. Set default font family to sans-serif.
+ * 2. Prevent iOS and IE text size adjust after device orientation change,
+ *    without disabling user zoom.
+ */
+html{
+    font-family: sans-serif;/* 1 */
+    -ms-text-size-adjust: 100%;/* 2 */
+    -webkit-text-size-adjust: 100%;/* 2 */
+}
+/**
+ * Remove default margin.
+ */
+body{
+    margin: 0;
+}
+/* HTML5 display definitions
+   ========================================================================== */
+/**
+ * Correct `block` display not defined for any HTML5 element in IE 8/9.
+ * Correct `block` display not defined for `details` or `summary` in IE 10/11
+ * and Firefox.
+ * Correct `block` display not defined for `main` in IE 11.
+ */
+article, aside, details, figcaption, figure, footer, header, hgroup, main, menu, nav, section, summary{
+    display: block;
+}
+/**
+ * 1. Correct `inline-block` display not defined in IE 8/9.
+ * 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera.
+ */
+audio, canvas, progress, video{
+    display: inline-block;/* 1 */
+    vertical-align: baseline;/* 2 */
+}
+/**
+ * Prevent modern browsers from displaying `audio` without controls.
+ * Remove excess height in iOS 5 devices.
+ */
+audio:not([controls]){
+    display: none;
+    height: 0;
+}
+/**
+ * Address `[hidden]` styling not present in IE 8/9/10.
+ * Hide the `template` element in IE 8/9/10/11, Safari, and Firefox < 22.
+ */
+[hidden], template{
+    display: none;
+}
+/* Links
+   ========================================================================== */
+/**
+ * Remove the gray background color from active links in IE 10.
+ */
+a{
+    background-color: transparent;
+}
+/**
+ * Improve readability of focused elements when they are also in an
+ * active/hover state.
+ */
+a:active, a:hover{
+    outline: 0;
+}
+/* Text-level semantics
+   ========================================================================== */
+/**
+ * Address styling not present in IE 8/9/10/11, Safari, and Chrome.
+ */
+abbr[title]{
+    border-bottom: 1px dotted;
+}
+/**
+ * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.
+ */
+b, strong{
+    font-weight: bold;
+}
+/**
+ * Address styling not present in Safari and Chrome.
+ */
+dfn{
+    font-style: italic;
+}
+/**
+ * Address variable `h1` font-size and margin within `section` and `article`
+ * contexts in Firefox 4+, Safari, and Chrome.
+ */
+h1{
+    font-size: 2em;
+    margin: 0.67em 0;
+}
+/**
+ * Address styling not present in IE 8/9.
+ */
+mark{
+    background: #ff0;
+    color: #000;
+}
+/**
+ * Address inconsistent and variable font size in all browsers.
+ */
+small{
+    font-size: 80%;
+}
+/**
+ * Prevent `sub` and `sup` affecting `line-height` in all browsers.
+ */
+sub, sup{
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+}
+sup{
+    top: -0.5em;
+}
+sub{
+    bottom: -0.25em;
+}
+/* Embedded content
+   ========================================================================== */
+/**
+ * Remove border when inside `a` element in IE 8/9/10.
+ */
+img{
+    border: 0;
+}
+/**
+ * Correct overflow not hidden in IE 9/10/11.
+ */
+svg:not(:root){
+    overflow: hidden;
+}
+/* Grouping content
+   ========================================================================== */
+/**
+ * Address margin not present in IE 8/9 and Safari.
+ */
+figure{
+    margin: 1em 40px;
+}
+/**
+ * Address differences between Firefox and other browsers.
+ */
+hr{
+    box-sizing: content-box;
+    height: 0;
+}
+/**
+ * Contain overflow in all browsers.
+ */
+pre{
+    overflow: auto;
+}
+/**
+ * Address odd `em`-unit font size rendering in all browsers.
+ */
+code, kbd, pre, samp{
+    font-family: monospace, monospace;
+    font-size: 1em;
+}
+/* Forms
+   ========================================================================== */
+/**
+ * Known limitation: by default, Chrome and Safari on OS X allow very limited
+ * styling of `select`, unless a `border` property is set.
+ */
+/**
+ * 1. Correct color not being inherited.
+ *    Known issue: affects color of disabled elements.
+ * 2. Correct font properties not being inherited.
+ * 3. Address margins set differently in Firefox 4+, Safari, and Chrome.
+ */
+button, input, optgroup, select, textarea{
+    color: inherit;/* 1 */
+    font: inherit;/* 2 */
+    margin: 0;/* 3 */
+}
+/**
+ * Address `overflow` set to `hidden` in IE 8/9/10/11.
+ */
+button{
+    overflow: visible;
+}
+/**
+ * Address inconsistent `text-transform` inheritance for `button` and `select`.
+ * All other form control elements do not inherit `text-transform` values.
+ * Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera.
+ * Correct `select` style inheritance in Firefox.
+ */
+button, select{
+    text-transform: none;
+}
+/**
+ * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`
+ *    and `video` controls.
+ * 2. Correct inability to style clickable `input` types in iOS.
+ * 3. Improve usability and consistency of cursor style between image-type
+ *    `input` and others.
+ */
+button, html input[type="button"], input[type="reset"], input[type="submit"]{
+    -webkit-appearance: button;/* 2 */
+    cursor: pointer;/* 3 */
+}
+/**
+ * Re-set default cursor for disabled elements.
+ */
+button[disabled], html input[disabled]{
+    cursor: default;
+}
+/**
+ * Remove inner padding and border in Firefox 4+.
+ */
+button::-moz-focus-inner, input::-moz-focus-inner{
+    border: 0;
+    padding: 0;
+}
+/**
+ * Address Firefox 4+ setting `line-height` on `input` using `!important` in
+ * the UA stylesheet.
+ */
+input{
+    line-height: normal;
+}
+/**
+ * It's recommended that you don't attempt to style these elements.
+ * Firefox's implementation doesn't respect box-sizing, padding, or width.
+ *
+ * 1. Address box sizing set to `content-box` in IE 8/9/10.
+ * 2. Remove excess padding in IE 8/9/10.
+ */
+input[type="checkbox"], input[type="radio"]{
+    box-sizing: border-box;/* 1 */
+    padding: 0;/* 2 */
+}
+/**
+ * Fix the cursor style for Chrome's increment/decrement buttons. For certain
+ * `font-size` values of the `input`, it causes the cursor style of the
+ * decrement button to change from `default` to `text`.
+ */
+input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button{
+    height: auto;
+}
+/**
+ * 1. Address `appearance` set to `searchfield` in Safari and Chrome.
+ * 2. Address `box-sizing` set to `border-box` in Safari and Chrome.
+ */
+input[type="search"]{
+    -webkit-appearance: textfield;/* 1 */
+    box-sizing: content-box;/* 2 */
+}
+/**
+ * Remove inner padding and search cancel button in Safari and Chrome on OS X.
+ * Safari (but not Chrome) clips the cancel button when the search input has
+ * padding (and `textfield` appearance).
+ */
+input[type="search"]::-webkit-search-cancel-button, input[type="search"]::-webkit-search-decoration{
+    -webkit-appearance: none;
+}
+/**
+ * Define consistent border, margin, and padding.
+ */
+fieldset{
+    border: 1px solid #c0c0c0;
+    margin: 0 2px;
+    padding: 0.35em 0.625em 0.75em;
+}
+/**
+ * 1. Correct `color` not being inherited in IE 8/9/10/11.
+ * 2. Remove padding so people aren't caught out if they zero out fieldsets.
+ */
+legend{
+    border: 0;/* 1 */
+    padding: 0;/* 2 */
+}
+/**
+ * Remove default vertical scrollbar in IE 8/9/10/11.
+ */
+textarea{
+    overflow: auto;
+}
+/**
+ * Don't inherit the `font-weight` (applied by a rule above).
+ * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.
+ */
+optgroup{
+    font-weight: bold;
+}
+/* Tables
+   ========================================================================== */
+/**
+ * Remove most spacing between table cells.
+ */
+table{
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+td, th{
+    padding: 0;
+}
+/*!
+ * GitHub User Content Stylesheets v2.5.0 (https://github.com/primer/markdown)
+ * Copyright 2015 GitHub, Inc.
+ * Licensed under MIT (https://github.com/primer/markdown/blob/master/LICENSE.md).
+ */
+.markdown-body{
+    font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+    font-size: 16px;
+    line-height: 1.6;
+    word-wrap: break-word;
+}
+.markdown-body:before{
+    display: table;
+    content: "";
+}
+.markdown-body:after{
+    display: table;
+    clear: both;
+    content: "";
+}
+.markdown-body > *:first-child{
+    margin-top: 0 !important;
+}
+.markdown-body > *:last-child{
+    margin-bottom: 0 !important;
+}
+.markdown-body a:not([href]){
+    color: inherit;
+    text-decoration: none;
+}
+.markdown-body .absent{
+    color: #c00;
+}
+.markdown-body .anchor{
+    display: inline-block;
+    padding-right: 2px;
+    margin-left: -18px;
+}
+.markdown-body .anchor:focus{
+    outline: none;
+}
+.markdown-body h1, .markdown-body h2, .markdown-body h3, .markdown-body h4, .markdown-body h5, .markdown-body h6{
+    margin-top: 1em;
+    margin-bottom: 16px;
+    font-weight: bold;
+    line-height: 1.4;
+}
+.markdown-body h1 .octicon-link, .markdown-body h2 .octicon-link, .markdown-body h3 .octicon-link, .markdown-body h4 .octicon-link, .markdown-body h5 .octicon-link, .markdown-body h6 .octicon-link{
+    color: #000;
+    vertical-align: middle;
+    visibility: hidden;
+}
+.markdown-body h1:hover .anchor, .markdown-body h2:hover .anchor, .markdown-body h3:hover .anchor, .markdown-body h4:hover .anchor, .markdown-body h5:hover .anchor, .markdown-body h6:hover .anchor{
+    text-decoration: none;
+}
+.markdown-body h1:hover .anchor .octicon-link, .markdown-body h2:hover .anchor .octicon-link, .markdown-body h3:hover .anchor .octicon-link, .markdown-body h4:hover .anchor .octicon-link, .markdown-body h5:hover .anchor .octicon-link, .markdown-body h6:hover .anchor .octicon-link{
+    visibility: visible;
+}
+.markdown-body h1 tt, .markdown-body h1 code, .markdown-body h2 tt, .markdown-body h2 code, .markdown-body h3 tt, .markdown-body h3 code, .markdown-body h4 tt, .markdown-body h4 code, .markdown-body h5 tt, .markdown-body h5 code, .markdown-body h6 tt, .markdown-body h6 code{
+    font-size: inherit;
+}
+.markdown-body h1{
+    padding-bottom: .3em;
+    font-size: 2.25em;
+    line-height: 1.2;
+    border-bottom: 1px solid #eee;
+}
+.markdown-body h1 .anchor{
+    line-height: 1;
+}
+.markdown-body h2{
+    padding-bottom: .3em;
+    font-size: 1.75em;
+    line-height: 1.225;
+    border-bottom: 1px solid #eee;
+}
+.markdown-body h2 .anchor{
+    line-height: 1;
+}
+.markdown-body h3{
+    font-size: 1.5em;
+    line-height: 1.43;
+}
+.markdown-body h3 .anchor{
+    line-height: 1.2;
+}
+.markdown-body h4{
+    font-size: 1.25em;
+}
+.markdown-body h4 .anchor{
+    line-height: 1.2;
+}
+.markdown-body h5{
+    font-size: 1em;
+}
+.markdown-body h5 .anchor{
+    line-height: 1.1;
+}
+.markdown-body h6{
+    font-size: 1em;
+    color: #777;
+}
+.markdown-body h6 .anchor{
+    line-height: 1.1;
+}
+.markdown-body p, .markdown-body blockquote, .markdown-body ul, .markdown-body ol, .markdown-body dl, .markdown-body table, .markdown-body pre{
+    margin-top: 0;
+    margin-bottom: 16px;
+}
+.markdown-body hr{
+    height: 4px;
+    padding: 0;
+    margin: 16px 0;
+    background-color: #e7e7e7;
+    border: 0 none;
+}
+.markdown-body ul, .markdown-body ol{
+    padding-left: 2em;
+}
+.markdown-body ul.no-list, .markdown-body ol.no-list{
+    padding: 0;
+    list-style-type: none;
+}
+.markdown-body ul ul, .markdown-body ul ol, .markdown-body ol ol, .markdown-body ol ul{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+.markdown-body li > p{
+    margin-top: 16px;
+}
+.markdown-body dl{
+    padding: 0;
+}
+.markdown-body dl dt{
+    padding: 0;
+    margin-top: 16px;
+    font-size: 1em;
+    font-style: italic;
+    font-weight: bold;
+}
+.markdown-body dl dd{
+    padding: 0 16px;
+    margin-bottom: 16px;
+}
+.markdown-body blockquote{
+    padding: 0 15px;
+    color: #777;
+    border-left: 4px solid #ddd;
+}
+.markdown-body blockquote > :first-child{
+    margin-top: 0;
+}
+.markdown-body blockquote > :last-child{
+    margin-bottom: 0;
+}
+.markdown-body table{
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+}
+.markdown-body table th{
+    font-weight: bold;
+}
+.markdown-body table th, .markdown-body table td{
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+.markdown-body table tr{
+    background-color: #fff;
+    border-top: 1px solid #ccc;
+}
+.markdown-body table tr:nth-child(2n){
+    background-color: #f8f8f8;
+}
+.markdown-body img{
+    max-width: 100%;
+    box-sizing: content-box;
+    background-color: #fff;
+}
+.markdown-body img[align=right]{
+    padding-left: 20px;
+}
+.markdown-body img[align=left]{
+    padding-right: 20px;
+}
+.markdown-body .emoji{
+    max-width: none;
+}
+.markdown-body span.frame{
+    display: block;
+    overflow: hidden;
+}
+.markdown-body span.frame > span{
+    display: block;
+    float: left;
+    width: auto;
+    padding: 7px;
+    margin: 13px 0 0;
+    overflow: hidden;
+    border: 1px solid #ddd;
+}
+.markdown-body span.frame span img{
+    display: block;
+    float: left;
+}
+.markdown-body span.frame span span{
+    display: block;
+    padding: 5px 0 0;
+    clear: both;
+    color: #333;
+}
+.markdown-body span.align-center{
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+.markdown-body span.align-center > span{
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: center;
+}
+.markdown-body span.align-center span img{
+    margin: 0 auto;
+    text-align: center;
+}
+.markdown-body span.align-right{
+    display: block;
+    overflow: hidden;
+    clear: both;
+}
+.markdown-body span.align-right > span{
+    display: block;
+    margin: 13px 0 0;
+    overflow: hidden;
+    text-align: right;
+}
+.markdown-body span.align-right span img{
+    margin: 0;
+    text-align: right;
+}
+.markdown-body span.float-left{
+    display: block;
+    float: left;
+    margin-right: 13px;
+    overflow: hidden;
+}
+.markdown-body span.float-left span{
+    margin: 13px 0 0;
+}
+.markdown-body span.float-right{
+    display: block;
+    float: right;
+    margin-left: 13px;
+    overflow: hidden;
+}
+.markdown-body span.float-right > span{
+    display: block;
+    margin: 13px auto 0;
+    overflow: hidden;
+    text-align: right;
+}
+.markdown-body code, .markdown-body tt{
+    padding: 0;
+    padding-top: .2em;
+    padding-bottom: .2em;
+    margin: 0;
+    font-size: 85%;
+    background-color: rgba(0, 0, 0, .04);
+    border-radius: 3px;
+}
+.markdown-body code:before, .markdown-body code:after, .markdown-body tt:before, .markdown-body tt:after{
+    letter-spacing: -.2em;
+    content: "\00a0";
+}
+.markdown-body code br, .markdown-body tt br{
+    display: none;
+}
+.markdown-body del code{
+    text-decoration: inherit;
+}
+.markdown-body pre > code{
+    padding: 0;
+    margin: 0;
+    font-size: 100%;
+    word-break: normal;
+    white-space: pre;
+    background: transparent;
+    border: 0;
+}
+.markdown-body .highlight{
+    margin-bottom: 16px;
+}
+.markdown-body .highlight pre, .markdown-body pre{
+    padding: 16px;
+    overflow: auto;
+    font-size: 85%;
+    line-height: 1.45;
+    background-color: #f7f7f7;
+    border-radius: 3px;
+}
+.markdown-body .highlight pre{
+    margin-bottom: 0;
+    word-break: normal;
+}
+.markdown-body pre{
+    word-wrap: normal;
+}
+.markdown-body pre code, .markdown-body pre tt{
+    display: inline;
+    max-width: initial;
+    padding: 0;
+    margin: 0;
+    overflow: initial;
+    line-height: inherit;
+    word-wrap: normal;
+    background-color: transparent;
+    border: 0;
+}
+.markdown-body pre code:before, .markdown-body pre code:after, .markdown-body pre tt:before, .markdown-body pre tt:after{
+    content: normal;
+}
+.markdown-body kbd{
+    display: inline-block;
+    padding: 3px 5px;
+    font-size: 11px;
+    line-height: 10px;
+    color: #555;
+    vertical-align: middle;
+    background-color: #fcfcfc;
+    border: solid 1px #ccc;
+    border-bottom-color: #bbb;
+    border-radius: 3px;
+    box-shadow: inset 0 -1px 0 #bbb;
+}
+
+/* Dependencies
+------------------------------------------------------------------  */
+
+/*  ------------------------------------------------------------------
+  Dependencies > Variables > Colors
+-------------------------------------------------------------------  */
+
+/* Grays */
+
+/* Transparent */
+
+/* Based on http://www.colourlovers.com/palette/3404745/berry_vines */
+
+/* Colors2Things
+------------------------------------------------------------------  */
+
+/* The main highlight color of the app */
+
+/* Secondary color used */
+
+/* Text Color */
+
+/* Input placeholder text color */
+
+/* Links */
+/*  ------------------------------------------------------------------
+  Dependencies > Variables > Sizes
+-------------------------------------------------------------------  */
+/*  ------------------------------------------------------------------
+  Dependencies > Variables > Typography
+-------------------------------------------------------------------  */
+
+/*  ------------------------------------------------------------------
+  Extends > Clearfix
+-------------------------------------------------------------------  */
+
+#main, #page-footer, #page-header{}
+
+#main:after, #main:before, #page-footer:after, #page-footer:before, #page-header:after, #page-header:before{
+    content: " ";
+    display: table;
+}
+
+#main:after, #page-footer:after, #page-header:after{
+    clear: both;
+}
+
+/* %clearfix */
+/*  ------------------------------------------------------------------
+  Extends > Image Replacement
+-------------------------------------------------------------------  */
+#page-header h1, body.splash h1{
+    background-color: transparent;
+    color: transparent;
+    border: 0;
+    overflow: hidden;
+    text-indent: 100%;
+    text-shadow: none;
+    white-space: nowrap;
+}
+#page-header h1:before, body.splash h1:before{
+    content: "";
+    display: block;
+    height: 100%;
+    width: 0;
+}
+/* %image-replacement */
+/*  ------------------------------------------------------------------
+  Extends > List in Disguise
+-------------------------------------------------------------------  */
+#main-navigation ol, #page-navigation ol{
+    margin: 0;
+    padding: 0;
+}
+#main-navigation ol li, #page-navigation ol li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+/*  %list-in-disguise */
+/*  ------------------------------------------------------------------
+  Extends > Nests
+-------------------------------------------------------------------  */
+#page-footer{
+    padding-left: calc(50% - 980px / 2);
+    padding-right: calc(50% - 980px / 2);
+}
+#main, body.splash #main{
+    margin-left: calc(50% - 980px / 2);
+    margin-right: calc(50% - 980px / 2);
+}
+
+/*  ------------------------------------------------------------------
+  Dependencies > Mixins > Responsive Design
+-------------------------------------------------------------------  */
+
+/* @define-mixin bodhi($breakpoint) */
+
+/* Vendor Overrides
+------------------------------------------------------------------  */
+/*  ------------------------------------------------------------------
+  Vendor > Primer Markdown Overrides
+-------------------------------------------------------------------  */
+.markdown-body h1:first-of-type{
+    line-height: 1;
+    margin-top: 0;
+}
+
+/* Base
+------------------------------------------------------------------  */
+/*  ------------------------------------------------------------------
+  Base > Default
+-------------------------------------------------------------------  */
+*{
+    background-repeat: no-repeat;
+}
+*, *:before, *:after{
+    box-sizing: border-box;
+}
+/* * */
+html, body{
+    height: 100%;
+    min-height: 100%;
+    min-width: 980px;
+    width: 100%;
+    z-index: 1;
+}
+body{
+    color: #333;
+    font-family: "Helvetica Neue",Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    font-size: 16px;
+    font-style: normal;
+    font-variant: normal;
+    line-height: 1.4;
+    margin: 0;
+    padding: 0;
+}
+span.amp{
+    font-family: Baskerville, Palatino, "Book Antiqua", serif;
+    font-style: italic;
+}
+.hidden, .is-hidden{
+    display: none !important;
+}
+.is-visible{
+    display: inline-block !important;
+}
+.invisible, .is-invisible{
+    height: 0 !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    min-width: 0 !important;
+    opacity: 0 !important;
+    padding: 0 !important;
+    z-index: $z-index-base - 100 !important;
+}
+a{
+    color: #B06E85;
+    text-decoration: none;
+}
+a:active, a:hover{
+    outline: 0;
+    text-decoration: underline;
+}
+/* a */
+
+/* Structure
+------------------------------------------------------------------  */
+.next{
+    border-top: 1px solid rgb(237, 222, 230);
+    padding-top: 10px;
+    text-align: right;
+}
+/*  ------------------------------------------------------------------
+  Structure > Main
+-------------------------------------------------------------------  */
+#main{
+    border-radius: 3px;
+    padding: 70px 15px 15px;
+}
+body.collection article, body.series article{
+    margin-left: 200px;
+}
+/* body.collection */
+/*  ------------------------------------------------------------------
+  Structure > Main Navigation
+-------------------------------------------------------------------  */
+#main-navigation{
+    float: right;
+    margin: 32px 25px 0 0;/* a */
+}
+#main-navigation li{
+    display: inline-block;
+    min-width: 150px;
+    text-align: center;
+    width: 19%;
+}
+#main-navigation li:last-child{
+    min-width: 50px;
+    margin: 0 0 0 10px;
+    width: 50px;
+}
+#main-navigation a{
+    color: #fff;
+    display: block;
+    font-weight: 200;
+    letter-spacing: 2px;
+    margin: 0 5%;
+    opacity: 0.9;
+    text-transform: uppercase;
+    width: 90%;
+}
+/* &:not(.icon-link) */
+#main-navigation a svg{
+    fill: #fff;
+    margin-bottom: -7px;
+}
+#main-navigation a:not(.icon-link){
+    line-height: 32px;/* .active */
+}
+#main-navigation a:not(.icon-link):hover{
+    background-color: #fff;
+    border-radius: 3px;
+    text-decoration: none;
+    color: rgb(89, 130, 85);
+}
+#main-navigation a:not(.icon-link).active{
+    border: 1px #fff solid;
+    border-radius: 3px;
+    opacity: 0.8;
+    text-decoration: none;
+}
+#main-navigation a:not(.icon-link).active:hover{
+    color: #000;
+}
+#main-navigation a:hover svg{
+    fill: #BEDB89;
+}
+/* #main-navigation */
+/*  ------------------------------------------------------------------
+  Structure > Page Footer
+-------------------------------------------------------------------  */
+#page-footer{
+    text-align: center;
+}
+#page-footer p{
+    font-size: 12px;
+}
+/* #page-footer */
+/*  ------------------------------------------------------------------
+  Structure > Page Header
+-------------------------------------------------------------------  */
+#page-header{
+    background-attachment: fixed;
+    background-color: #fff;
+    background-image: url('/img/bg.jpg');
+    background-position: top center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 103px;
+}
+#page-header h1{
+    background-image: url("/img/absinthe-dark.svg");
+    color: transparent;
+    display: block;
+    position: absolute;
+    top: 10px;
+    left: 25px;
+    height: 150px;
+    margin: 0;
+    padding: 0;
+    width: 300px;
+}
+/* #page-header */
+/*  ------------------------------------------------------------------
+  Structure > Page Navigation
+-------------------------------------------------------------------  */
+#page-navigation{
+    float: left;/* a */
+}
+#page-navigation .page-navigation-header{
+    font-size: 13px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#page-navigation ol{
+    margin: 0 50px 50px 0;
+}
+#page-navigation li{
+    border-bottom: 1px solid rgb(237, 222, 230);
+}
+#page-navigation a{
+    display: block;
+    margin: 15px 15px 15px 0;
+    width: 100%;
+}
+#page-navigation a:hover{
+    color: rgb(132, 72, 93);
+    text-decoration: none;
+}
+#page-navigation a.active{
+    font-weight: 700;
+}
+/* #main-navigation */
+/*  ------------------------------------------------------------------
+  Structure > Splash
+-------------------------------------------------------------------  */
+body.splash{
+    background-attachment: fixed;
+    background-color: #fff;
+    background-image: url('/img/bg.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    min-height: 660px;/* $page-footer */
+}
+body.splash #main-navigation{
+    clear: both;
+    width: 100%;
+}
+body.splash #main{
+    height: 100%;
+    min-height: 660px;
+    padding: 0;
+    position: relative;
+    text-align: center;
+    background-color: none;
+}
+body.splash h1{
+    background-image: url("/img/absinthe.svg");
+    opacity: 0.8;
+    color: transparent;
+    display: block;
+    height: 425px;
+    margin: 0;
+    padding: 0;
+    width: 700px;
+}
+body.splash h2{
+    opacity: 0.8;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 300;
+    margin: 30px 0 0;
+    padding: 0;
+}
+body.splash h2 .amp{
+    display: inline-block;
+    padding: 0 6px 0 4px;
+}
+/* h2 */
+body.splash .splash-content{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+body.splash #page-footer{
+    color: #fff;
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+}
+body.splash #page-footer a{
+    color: #BEDB89;
+}
+/* body.splash */

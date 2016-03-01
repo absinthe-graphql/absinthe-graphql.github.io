@@ -1,0 +1,223 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <title>Context</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- ok >
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="Nanoc 4.1.4">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+
+  <script src="/js/main.js"></script>
+</head>
+
+
+<body class="preload markdown-body collection">
+
+  <header id="page-header" role="banner">
+  <a href="/"><h1 class="logo">Absinthe</h1></a>
+  <nav id="main-navigation">
+  <ol>
+    <li><a href='/learning-graphql/'>GraphQL?</a></li>
+    <li><a href='/tutorial/'>Tutorial</a></li>
+    <li><a href='/guides/' class="active">Guides</a></li>
+    <li><a href='/projects/'>Projects</a></li>
+    <li>
+      <a class="icon-link" target="github" href="https://github.com/absinthe-graphql">
+        <svg aria-hidden="true" height="28" role="img" version="1.1" viewBox="0 0 16 16" width="28"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
+      </a>
+    </li>
+  </ol>
+</nav>
+
+</header>
+
+
+  <main id="main">
+    <nav id="page-navigation">
+  <p class="page-navigation-header">guides</p>
+  <ol>
+    
+      <li><a href='/guides/'>Guide Index</a></li>
+    
+      <li><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
+    
+      <li><a href='/guides/context/' class="active">Context</a></li>
+    
+      <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
+    
+  </ol>
+</nav>
+
+
+    <article>
+      <header>
+        <h1>Context</h1>
+      </header>
+      
+<p>Absinthe context exists to provide shared values to a given document execution.
+A common use would be to pass in the current user of a given request. The context
+is set at the call to <code>Absinthe.run</code>, and cannot be modified over the course of
+a given execution.</p>
+
+<h2 id="basic-usage">Basic Usage</h2>
+
+<p>As a basic example let’s think about a profile page, where we want the current user
+to be able to access basic information about themselves, but not other users.</p>
+
+<p>First we’ll need a very basic schema</p>
+
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span>
+
+  <span class="nv">@fakedb</span> <span class="p">%{</span>
+    <span class="sd">"</span><span class="s2">1"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="ss">name:</span> <span class="sd">"</span><span class="s2">Bob"</span><span class="p">,</span> <span class="ss">email:</span> <span class="sd">"</span><span class="s2">bubba@foo.com"</span><span class="p">},</span>
+    <span class="sd">"</span><span class="s2">2"</span> <span class="o">=&gt;</span> <span class="p">%{</span><span class="ss">name:</span> <span class="sd">"</span><span class="s2">Fred"</span><span class="p">,</span> <span class="ss">email:</span> <span class="sd">"</span><span class="s2">fredmeister@foo.com"</span><span class="p">},</span>
+  <span class="p">}</span>
+
+  <span class="n">query</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:profile</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
+      <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+        <span class="c1"># How could we get a current user here?</span>
+      <span class="k">end</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="n">object</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:id</span>
+    <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+
+<p>A query we might want would look like</p>
+<pre><code class="language-text highlight">{
+  profile {
+    email
+  }
+}</code></pre>
+
+<p>If we’re signed in as user 1, we should get only user 1’s email.</p>
+<pre><code class="language-json highlight"><span class="p">{</span><span class="nt">"profile"</span><span class="p">:{</span><span class="nt">"email"</span><span class="p">:</span><span class="s2">"bubba@foo.com"</span><span class="p">}}</span></code></pre>
+
+<p>In order to set the context, our call to Absinthe.run should look like:</p>
+<pre><code class="language-elixir highlight"><span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">,</span> <span class="ss">context:</span> <span class="p">%{</span><span class="ss">current_user:</span> <span class="p">%{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="p">}})</span></code></pre>
+
+<p>To access this, we need to update our query’s resolve function:</p>
+<pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:profile</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="p">%{</span><span class="ss">context:</span> <span class="p">%{</span><span class="ss">current_user:</span> <span class="n">current_user</span><span class="p">}}</span> <span class="o">-&gt;</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nv">@fakedb</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+
+<p>And now it works!</p>
+
+<h2 id="context-and-plugs">Context and Plugs</h2>
+
+<p>When using Absinthe.Plug you don’t have direct access to the Absinthe.run call.
+Instead, we can use <code>Plug.Conn.put_private/3</code> to set context values which Absinthe.Plug
+will pass it along to Absinthe.run.</p>
+
+<p>Setting up your GraphQL context is as simple as writing a plug that inserts the
+appropriate values into the connection.</p>
+
+<p>Let’s use this mechanism to set our current_user from the previous example via
+an authentication header. We will use the same Schema as before.</p>
+
+<p>First, our plug. We’ll be checking the for the <code>authorization</code> header, and calling
+out to some unspecified authentication mechanism.</p>
+
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span> <span class="k">do</span>
+  <span class="nv">@behaviour</span> <span class="no">Plug</span>
+  <span class="kn">import</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Conn</span>
+
+  <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">opts</span>
+
+  <span class="k">def</span> <span class="n">call</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="n">_</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="n">build_context</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">context</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="n">put_private</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="ss">:absinthe</span><span class="p">,</span> <span class="p">%{</span><span class="ss">context:</span> <span class="n">context</span><span class="p">})</span>
+      <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="n">send_resp</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="m">403</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+      <span class="n">_</span> <span class="o">-&gt;</span>
+        <span class="n">send_resp</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="m">400</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="nv">@doc</span> <span class="sd">"""
+  Return the current user context based on the authorization header
+  """</span>
+  <span class="k">def</span> <span class="n">build_context</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">with</span> <span class="p">[</span><span class="sd">"</span><span class="s2">Bearer "</span> <span class="o">&lt;&gt;</span> <span class="n">token</span><span class="p">]</span> <span class="o">&lt;-</span> <span class="n">get_req_header</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="sd">"</span><span class="s2">authorization"</span><span class="p">),</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">current_user</span><span class="p">}</span> <span class="o">&lt;-</span> <span class="n">authorize</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">current_user:</span> <span class="n">current_user</span><span class="p">}}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">defp</span> <span class="n">authorize</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">User</span>
+    <span class="o">|&gt;</span> <span class="n">where</span><span class="p">(</span><span class="ss">token:</span> <span class="n">token</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">one</span>
+    <span class="o">|&gt;</span> <span class="k">case</span> <span class="k">do</span>
+      <span class="no">nil</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">invalid authorization token"</span><span class="p">}</span>
+      <span class="n">user</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">user</span><span class="p">}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span></code></pre>
+
+<p>This plug will use the <code>authorization</code> header to lookup the current user, and return
+various error codes should that fail. If it succeeds, it correctly sets the absinthe context.</p>
+
+<p>Using this plug is very simple. If we’re just in a normal plug context we can just
+make sure it’s plugged prior to Absinthe.Plug</p>
+
+<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span>
+
+<span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+  <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+
+<p>If you’re using a phoenix router, add the context plug to a pipeline.</p>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span>
+
+  <span class="n">resource</span> <span class="sd">"</span><span class="s2">/pages"</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">PagesController</span>
+
+  <span class="n">pipeline</span> <span class="ss">:graphql</span> <span class="k">do</span>
+    <span class="n">plug</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span>
+  <span class="k">end</span>
+
+  <span class="n">scope</span> <span class="sd">"</span><span class="s2">/api"</span> <span class="k">do</span>
+    <span class="n">pipe_through</span> <span class="ss">:graphql</span>
+
+    <span class="n">forward</span> <span class="sd">"</span><span class="s2">/api"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
+      <span class="ss">schema:</span> <span class="no">Fractalsense</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Schema</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+
+
+    </article>
+
+  </main>
+
+  <footer id="page-footer">
+  <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+</footer>
+
+
+</body>
+</html>
