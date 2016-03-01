@@ -54,8 +54,6 @@
     
       <li><a href='/tutorial/our-first-query/'>Our First Query</a></li>
     
-      <li><a href='/tutorial/resolution/'>Resolution Overview</a></li>
-    
       <li><a href='/tutorial/query-arguments/' class="active">Query Arguments</a></li>
     
       <li><a href='/tutorial/mutations/'>Mutations</a></li>
@@ -76,21 +74,22 @@
 <p>Our blog needs users, and the ability to look up users by id. Here’s
 the query we want to support:</p>
 
-<pre><code class="language-text highlight">{
-  user(id: "1") {
-    name
-    email
-  }
-}</code></pre>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="err">{</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">name</span>
+    <span class="n">email</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">Get the name and email address of a user</figcaption>
+</figure>
 
 <p>This query includes arguments, which are the key value pairs contained
 within the parenthesis. To support this, we’ll create first create a
 user type, and then create a query in our schema that takes an id
 argument.</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># in web/schema/types</span>
-
-<span class="n">object</span> <span class="ss">:user</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">in web/schema/types</figcaption>
+<pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:user</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:id</span>
   <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
@@ -101,10 +100,11 @@ argument.</p>
   <span class="n">field</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:author</span><span class="p">,</span> <span class="ss">:user</span>
-<span class="k">end</span>
+<span class="k">end</span></code></pre>
+</figure>
 
-<span class="c1"># in web/schema.ex</span>
-<span class="n">query</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span><span class="o">.</span><span class="n">all</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
@@ -113,13 +113,14 @@ argument.</p>
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>In GraphQL you define your arguments ahead of time just like your
 return values. This powers a number of very helpful features. To see
 them at work, let’s look at our resolver.</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># web/resolver/user.ex</span>
-<span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/resolver/user.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span> <span class="k">do</span>
   <span class="k">def</span> <span class="n">find</span><span class="p">(%{</span><span class="ss">id:</span> <span class="n">id</span><span class="p">},</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
     <span class="k">case</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="no">User</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="k">do</span>
       <span class="no">nil</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">User id </span><span class="si">#{</span><span class="n">id</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">}</span>
@@ -127,6 +128,7 @@ them at work, let’s look at our resolver.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>The second argument to every resolve function contains the GraphQL
 arguments of the query / mutation. Our schema marks the <code>:id</code> argument as
@@ -157,6 +159,7 @@ user that does not exist.</p>
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

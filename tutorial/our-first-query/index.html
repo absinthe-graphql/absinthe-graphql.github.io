@@ -54,8 +54,6 @@
     
       <li><a href='/tutorial/our-first-query/' class="active">Our First Query</a></li>
     
-      <li><a href='/tutorial/resolution/'>Resolution Overview</a></li>
-    
       <li><a href='/tutorial/query-arguments/'>Query Arguments</a></li>
     
       <li><a href='/tutorial/mutations/'>Mutations</a></li>
@@ -77,12 +75,14 @@
 that’s what we’re going to give them. Here’s the query we want to
 support:</p>
 
-<pre><code class="language-text highlight">{
-  posts {
-    title
-    body
-  }
-}</code></pre>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="err">{</span>
+  <span class="n">posts</span> <span class="err">{</span>
+    <span class="n">title</span>
+    <span class="n">body</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">A simple query</figcaption>
+</figure>
 
 <p>To do this we’re going to need a schema. Let’s create some basic types
 for our schema, starting with a Post. GraphQL has several fundamental
@@ -90,8 +90,8 @@ types on top of which all of our types will be built. The
 <a href="http://hexdocs.pm/absinthe/Absinthe.Type.Object.html">Object</a> type is
 the right one to use when representing a set of key value pairs.</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># web/schema/types.ex</span>
-<span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Types</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/schema/types.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Types</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Notation</span>
 
   <span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
@@ -100,6 +100,7 @@ the right one to use when representing a set of key value pairs.</p>
     <span class="n">field</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>The canonical GraphQL name of the type is defined automatically for
 us as a TitleCased version of the identifier (in this case <code>:post</code> gives us
@@ -113,8 +114,8 @@ In our case it’s our regular Ecto id, but always serialized as a string.</p>
 <p>With our type completed we can now write a basic schema that will let us query a
 set of posts.</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># web/schema.ex</span>
-<span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span>
   <span class="n">import_types</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Types</span>
 
@@ -126,14 +127,16 @@ set of posts.</p>
     <span class="k">end</span>
   <span class="k">end</span>
 
-<span class="k">end</span>
+<span class="k">end</span></code></pre>
+</figure>
 
-<span class="c1"># web/resolver/post.ex</span>
-<span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/resolver/post.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span> <span class="k">do</span>
   <span class="k">def</span> <span class="n">all</span><span class="p">(</span><span class="n">_args</span><span class="p">,</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
     <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="no">Post</span><span class="p">)}</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>Queries are defined as fields inside the GraphQL object returned by
 our <code>query</code> function. We created a posts query that has a type
@@ -150,12 +153,14 @@ and <a href="http://hexdocs.pm/absinthe/Absinthe.Schema.Notation.html">Absinthe.
 <p>The last thing we need to do is configure our Phoenix router to use our newly
 created schema.</p>
 
+<figure class="codeblock"><figcaption class="filename">web/router.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span>
 
   <span class="n">forward</span> <span class="sd">"</span><span class="s2">/"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
     <span class="ss">schema:</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Schema</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>That’s it! We’re running GraphQL.</p>
 
@@ -167,7 +172,7 @@ your schema doesn’t exist.</p>
       
         <p class="next">
           Next: Read
-          <a href="/tutorial/resolution/">"Resolution Overview"</a>
+          <a href="/tutorial/query-arguments/">"Query Arguments"</a>
         </p>
       
     </article>
@@ -176,6 +181,7 @@ your schema doesn’t exist.</p>
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

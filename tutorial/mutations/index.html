@@ -54,8 +54,6 @@
     
       <li><a href='/tutorial/our-first-query/'>Our First Query</a></li>
     
-      <li><a href='/tutorial/resolution/'>Resolution Overview</a></li>
-    
       <li><a href='/tutorial/query-arguments/'>Query Arguments</a></li>
     
       <li><a href='/tutorial/mutations/' class="active">Mutations</a></li>
@@ -76,19 +74,19 @@
 <p>A blog is no good without new content. We want to support a mutation
 to create a blog post:</p>
 
-<p><code>
-mutation CreatePost {
-  post(title: "Second", body: "We're off to a great start!") {
-    id
-  }
-}
-</code></p>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">mutation</span> <span class="n">CreatePost</span> <span class="err">{</span>
+  <span class="n">post</span><span class="err">(</span><span class="ss">title:</span> <span class="sd">"</span><span class="s2">Second"</span><span class="err">,</span> <span class="ss">body:</span> <span class="sd">"</span><span class="s2">We're off to a great start!"</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">id</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">Create a post and return the new post ID.</figcaption>
+</figure>
 
 <p>Now we just need to define a <code>mutation</code> portion of our schema and
 a <code>:post</code> field:</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># in web/schema.ex</span>
-<span class="n">mutation</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="n">mutation</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:post</span><span class="p">,</span> <span class="ss">type:</span> <span class="ss">:post</span> <span class="k">do</span>
     <span class="n">arg</span> <span class="ss">:title</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
     <span class="n">arg</span> <span class="ss">:body</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
@@ -96,16 +94,18 @@ a <code>:post</code> field:</p>
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span><span class="o">.</span><span class="n">create</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>The resolver in this case is responsible for making any changes and returning
 an <code>{:ok, post}</code> tuple matching the <code>:post</code> type we defined earlier:</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># in web/resolver/post.ex</span>
-<span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/resolver/post.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
   <span class="p">%</span><span class="no">Post</span><span class="p">{}</span>
   <span class="o">|&gt;</span> <span class="no">Post</span><span class="o">.</span><span class="n">changeset</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
   <span class="o">|&gt;</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">insert</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>With this in place, we can accept posts!</p>
 
@@ -121,6 +121,7 @@ an <code>{:ok, post}</code> tuple matching the <code>:post</code> type we define
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

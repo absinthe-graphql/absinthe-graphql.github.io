@@ -79,7 +79,7 @@ to be able to access basic information about themselves, but not other users.</p
 
 <p>First we’ll need a very basic schema</p>
 
-<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span> <span class="k">do</span>
   <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span>
 
   <span class="nv">@fakedb</span> <span class="p">%{</span>
@@ -101,28 +101,37 @@ to be able to access basic information about themselves, but not other users.</p
     <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
-<p>A query we might want would look like</p>
-<pre><code class="language-text highlight">{
+<p>A query we might want would look like
+<figure class="codeblock">&lt;pre&gt;<code class="language-graphql">
+{
   profile {
     email
   }
-}</code></pre>
+}</code>&lt;/pre&gt;
+</figure></p>
 
-<p>If we’re signed in as user 1, we should get only user 1’s email.</p>
-<pre><code class="language-json highlight"><span class="p">{</span><span class="nt">"profile"</span><span class="p">:{</span><span class="nt">"email"</span><span class="p">:</span><span class="s2">"bubba@foo.com"</span><span class="p">}}</span></code></pre>
+<p>If we’re signed in as user 1, we should get only user 1’s email.
+<figure class="codeblock">&lt;pre&gt;<code class="language-json">
+{"profile":{"email":"bubba@foo.com"}}</code>&lt;/pre&gt;
+</figure></p>
 
-<p>In order to set the context, our call to Absinthe.run should look like:</p>
-<pre><code class="language-elixir highlight"><span class="no">Absinthe</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">document</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">,</span> <span class="ss">context:</span> <span class="p">%{</span><span class="ss">current_user:</span> <span class="p">%{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="p">}})</span></code></pre>
+<p>In order to set the context, our call to Absinthe.run should look like:
+<figure class="codeblock">&lt;pre&gt;<code class="language-elixir">
+Absinthe.run(document, MyApp.Schema, context: %{current_user: %{id: "1"}})</code>&lt;/pre&gt;
+</figure></p>
 
-<p>To access this, we need to update our query’s resolve function:</p>
-<pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
-  <span class="n">field</span> <span class="ss">:profile</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
-    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="p">%{</span><span class="ss">context:</span> <span class="p">%{</span><span class="ss">current_user:</span> <span class="n">current_user</span><span class="p">}}</span> <span class="o">-&gt;</span>
-      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nv">@fakedb</span><span class="p">,</span> <span class="n">current_user</span><span class="o">.</span><span class="n">id</span><span class="p">)}</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
-<span class="k">end</span></code></pre>
+<p>To access this, we need to update our query’s resolve function:
+<figure class="codeblock">&lt;pre&gt;<code class="language-elixir">
+query do
+  field :profile, :user do
+    resolve fn _, %{context: %{current_user: current_user}} -&gt;
+      {:ok, Map.get(@fakedb, current_user.id)}
+    end
+  end
+end</code>&lt;/pre&gt;
+</figure></p>
 
 <p>And now it works!</p>
 
@@ -141,7 +150,7 @@ an authentication header. We will use the same Schema as before.</p>
 <p>First, our plug. We’ll be checking the for the <code>authorization</code> header, and calling
 out to some unspecified authentication mechanism.</p>
 
-<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span> <span class="k">do</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span> <span class="k">do</span>
   <span class="nv">@behaviour</span> <span class="no">Plug</span>
   <span class="kn">import</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Conn</span>
 
@@ -179,6 +188,7 @@ out to some unspecified authentication mechanism.</p>
   <span class="k">end</span>
 
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>This plug will use the <code>authorization</code> header to lookup the current user, and return
 various error codes should that fail. If it succeeds, it correctly sets the absinthe context.</p>
@@ -186,29 +196,30 @@ various error codes should that fail. If it succeeds, it correctly sets the absi
 <p>Using this plug is very simple. If we’re just in a normal plug context we can just
 make sure it’s plugged prior to Absinthe.Plug</p>
 
-<pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span>
 
 <span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
   <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+</figure>
 
-<p>If you’re using a phoenix router, add the context plug to a pipeline.</p>
-<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
-  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span>
+<p>If you’re using a phoenix router, add the context plug to a pipeline.
+<figure class="codeblock">&lt;pre&gt;<code class="language-elixir">
+defmodule MyApp.Router do
+  use Phoenix.Router</code></figure></p>
 
-  <span class="n">resource</span> <span class="sd">"</span><span class="s2">/pages"</span><span class="p">,</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">PagesController</span>
+<p>resource "/pages", MyApp.PagesController</p>
 
-  <span class="n">pipeline</span> <span class="ss">:graphql</span> <span class="k">do</span>
-    <span class="n">plug</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span>
-  <span class="k">end</span>
+<p>pipeline :graphql do
+    plug MyApp.Web.Context
+  end</p>
 
-  <span class="n">scope</span> <span class="sd">"</span><span class="s2">/api"</span> <span class="k">do</span>
-    <span class="n">pipe_through</span> <span class="ss">:graphql</span>
+<p>scope "/api" do
+    pipe_through :graphql</p>
 
-    <span class="n">forward</span> <span class="sd">"</span><span class="s2">/api"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
-      <span class="ss">schema:</span> <span class="no">Fractalsense</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Schema</span>
-  <span class="k">end</span>
-<span class="k">end</span></code></pre>
-
+<pre><code>forward &amp;quot;/api&amp;quot;, Absinthe.Plug,
+  schema: Fractalsense.Web.Schema   end end&lt;/code&gt;&lt;/pre&gt;
+</code></pre>
+<p>&lt;/figure&gt;</p>
 
     </article>
 
@@ -216,6 +227,7 @@ make sure it’s plugged prior to Absinthe.Plug</p>
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

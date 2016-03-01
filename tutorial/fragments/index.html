@@ -54,8 +54,6 @@
     
       <li><a href='/tutorial/our-first-query/'>Our First Query</a></li>
     
-      <li><a href='/tutorial/resolution/'>Resolution Overview</a></li>
-    
       <li><a href='/tutorial/query-arguments/'>Query Arguments</a></li>
     
       <li><a href='/tutorial/mutations/'>Mutations</a></li>
@@ -80,34 +78,35 @@ give the people a voice!</p>
 dialog, we’re going to allow comments both directly on the post, as
 well as on other comments. For mutations we’ll want to accept both
 post and comment arguments. For querying a comment, we’re going to
-need some fancier GraphQL features. Here are the documents we want to
-support:</p>
+need some fancier GraphQL features.</p>
 
-<pre><code class="language-text highlight">mutation CreateComment {
-  comment(post: {id: "1"})
-}
-mutation CreateReply {
-  comment(comment: {id: "1"})
-}
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">mutation</span> <span class="n">CreateComment</span> <span class="err">{</span>
+  <span class="n">comment</span><span class="err">(</span><span class="ss">post:</span> <span class="err">{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">})</span>
+<span class="err">}</span>
+<span class="k">mutation</span> <span class="n">CreateReply</span> <span class="err">{</span>
+  <span class="n">comment</span><span class="err">(</span><span class="ss">comment:</span> <span class="err">{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">})</span>
+<span class="err">}</span>
 
-query UserComments {
-  user(id: "1") {
-    comments {
-      subject {
-        id
-        ... on Post {
-          title
-        }
-        ... on Comment {
-          body
-          author {
-            name
-          }
-        }
-      }
-    }
-  }
-}</code></pre>
+<span class="k">query</span> <span class="n">UserComments</span> <span class="err">{</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">comments</span> <span class="err">{</span>
+      <span class="n">subject</span> <span class="err">{</span>
+        <span class="n">id</span>
+        <span class="o">...</span> <span class="k">on</span> <span class="n">Post</span> <span class="err">{</span>
+          <span class="n">title</span>
+        <span class="err">}</span>
+        <span class="o">...</span> <span class="k">on</span> <span class="n">Comment</span> <span class="err">{</span>
+          <span class="n">body</span>
+          <span class="n">author</span> <span class="err">{</span>
+            <span class="n">name</span>
+          <span class="err">}</span>
+        <span class="err">}</span>
+      <span class="err">}</span>
+    <span class="err">}</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">Operations we want to support</figcaption>
+</figure>
 
 <p>Each comment has a subject. That subject can be either a post or another comment.</p>
 
@@ -118,6 +117,7 @@ query UserComments {
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

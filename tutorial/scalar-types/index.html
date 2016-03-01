@@ -54,8 +54,6 @@
     
       <li><a href='/tutorial/our-first-query/'>Our First Query</a></li>
     
-      <li><a href='/tutorial/resolution/'>Resolution Overview</a></li>
-    
       <li><a href='/tutorial/query-arguments/'>Query Arguments</a></li>
     
       <li><a href='/tutorial/mutations/'>Mutations</a></li>
@@ -77,12 +75,14 @@
 be something we could both send as part of our CreatePost mutation,
 and also retrieve in a query.</p>
 
-<pre><code class="language-text highlight">mutation CreatePost {
-  post(title: "Second", body: "We're off to a great start!", postedAt: "2016-01-19T16:07:37Z") {
-    id
-    postedAt
-  }
-}</code></pre>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">mutation</span> <span class="n">CreatePost</span> <span class="err">{</span>
+  <span class="n">post</span><span class="err">(</span><span class="ss">title:</span> <span class="sd">"</span><span class="s2">Second"</span><span class="err">,</span> <span class="ss">body:</span> <span class="sd">"</span><span class="s2">We're off to a great start!"</span><span class="err">,</span> <span class="ss">postedAt:</span> <span class="sd">"</span><span class="s2">2016-01-19T16:07:37Z"</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">id</span>
+    <span class="n">postedAt</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">Create a post and return the new post ID and creation time.</figcaption>
+</figure>
 
 <p>Here we have a small conundrum. While GraphQL strings have an obvious
 counterpart in elixir strings, time in Elixir is often represented by
@@ -94,23 +94,26 @@ additional
 
 <p>Let’s define our time type:</p>
 
-<pre><code class="language-elixir highlight"><span class="c1"># in web/schema/types.ex</span>
-
-<span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/schema/types.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
   <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
   <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>Our post should now look like:</p>
 
+<figure class="codeblock"><figcaption class="filename">web/schema/types.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:posted_at</span><span class="p">,</span> <span class="ss">:time</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>And our mutation in the schema should look like:</p>
 
+<figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="n">mutation</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:post</span><span class="p">,</span> <span class="ss">type:</span> <span class="ss">:post</span> <span class="k">do</span>
     <span class="n">arg</span> <span class="ss">:title</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
@@ -119,6 +122,7 @@ additional
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span><span class="o">.</span><span class="n">create</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>When <code>posted_at</code> is passed as an argument, the parse function we
 defined in our <code>:time</code> type will be called and it will automatically
@@ -138,6 +142,7 @@ serialized back to a string for easy JSON representation.</p>
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 

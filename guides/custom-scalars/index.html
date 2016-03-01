@@ -80,16 +80,17 @@ providing <code>parse</code> and <code>serialize</code> functions.</p>
 
 <p>Here’s a simple scalar definition:</p>
 
-<pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
   <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
   <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
+</figure>
 
 <p>This creates a new scalar type, <code>:time</code> that converts between external string
 times in ISOz format and internal <a href="https://github.com/bitwalker/timex">Timex</a>
 structs.</p>
 
-<p class="note">
+<p class="notice">
  By default, types defined in Absinthe schemas are automatically given TitleCased
  names for use in GraphQL documents. To give a type a custom name, pass a
  `:name` option. In this example, our scalar type is automatically assigned `Time`).
@@ -120,9 +121,7 @@ serializing it to the same format that <code>parse</code> expects as input.</p>
 <p>Descriptions are especially useful for scalars, as users may not be familiar
 with the constraints your <code>parse</code> function may place on incoming values.</p>
 
-<p>Be nice and tell them:</p>
-
-<pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"""
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"""
 The `Time` scalar type represents time values provided in the ISOz
 datetime format (that is, the ISO 8601 format without the timezone offset, eg,
 "2015-06-24T04:50:34Z").
@@ -131,6 +130,11 @@ datetime format (that is, the ISO 8601 format without the timezone offset, eg,
   <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
   <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
+</figure>
+
+<p class="warning">Don't forget to include descriptions for your types
+(and fields and arguments). Introspection is a key benefit of using GraphQL, and
+you'll thank yourself for helpful descriptions later.</p>
 
 <h2 id="as-query-document-variables">As query document variables</h2>
 
@@ -139,9 +143,10 @@ just like any other input type.</p>
 
 <p>Here’s a query document that marks a post as read, requiring a non-null <code>Time</code> value:</p>
 
-<pre><code class="language-text highlight">mutation MarkPostAsRead($postID: ID!, $when: Time!) {
-  markRead(id: $postID, readAt: $when)
-}</code></pre>
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">mutation</span> <span class="n">MarkPostAsRead</span><span class="err">($</span><span class="ss">postID:</span> <span class="n">ID!</span><span class="err">,</span> <span class="err">$</span><span class="ss">when:</span> <span class="n">Time!</span><span class="err">)</span> <span class="err">{</span>
+  <span class="n">markRead</span><span class="err">(</span><span class="ss">id:</span> <span class="err">$</span><span class="n">postID</span><span class="err">,</span> <span class="ss">readAt:</span> <span class="err">$</span><span class="n">when</span><span class="err">)</span>
+<span class="err">}</span></code></pre>
+</figure>
 
 <h2 id="further-reading">Further reading</h2>
 
@@ -156,6 +161,7 @@ just like any other input type.</p>
 
   <footer id="page-footer">
   <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
 </footer>
 
 
