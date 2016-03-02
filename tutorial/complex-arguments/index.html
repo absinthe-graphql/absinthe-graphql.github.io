@@ -130,13 +130,16 @@ suffix your input object type names with <code>_input</code></p>
 
 <figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="n">mutation</span> <span class="k">do</span>
+
   <span class="c1">#... other mutations</span>
+
   <span class="n">field</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
-    <span class="n">field</span> <span class="ss">:contact</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:contact_input</span><span class="p">)</span>
-    <span class="n">field</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span>
+    <span class="n">arg</span> <span class="ss">:contact</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:contact_input</span><span class="p">)</span>
+    <span class="n">arg</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span>
 
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span><span class="o">.</span><span class="n">create</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
+
 <span class="k">end</span></code></pre>
 </figure>
 
