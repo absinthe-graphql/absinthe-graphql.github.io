@@ -3,7 +3,7 @@
 
   <head>
   <meta charset="utf-8">
-  <title>Our First Query</title>
+  <title>Absinthe: Our First Query</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <!-- ok >
@@ -17,8 +17,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
 
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
-  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/img/favicon.ico">
 
   <script src="/js/main.js"></script>
 </head>
@@ -105,14 +105,17 @@ the right one to use when representing a set of key value pairs.</p>
 <span class="k">end</span></code></pre>
 </figure>
 
-<p>The canonical GraphQL name of the type is defined automatically for
-us as a TitleCased version of the identifier (in this case <code>:post</code> gives us
-<code>"Post"</code>). We could change this by passing an explicit value to the <code>object</code>
-macro as <code>:name</code>.</p>
+<p class="notice">
+The GraphQL specification requires that type names be unique, TitleCased words.
+Absinthe does this automatically for us, extrapolating from our type identifier
+(in this case <code>:post</code> gives us <code>"Post"</code>). If really
+needed, we could provide a custom type name as a <code>:name</code> option to
+the <code>object</code> macro.
+</p>
 
 <p>If you’re curious what the type <code>:id</code> is used by the <code>:id</code> field, see the
-<a href="https://facebook.github.io/graphql/#sec-ID">GraphQL spec</a>.
-In our case it’s our regular Ecto id, but always serialized as a string.</p>
+<a href="https://facebook.github.io/graphql/#sec-ID">GraphQL spec</a>. It’s an opaque
+value, and in our case is just the regular Ecto id, but serialized as a string.</p>
 
 <p>With our type completed we can now write a basic schema that will let us query a
 set of posts.</p>
@@ -167,7 +170,7 @@ created schema.</p>
 
 <p>That’s it! We’re running GraphQL.</p>
 
-<p>Using Absinthe.Plug in your router ensures that your schema is type
+<p>Using <code>Absinthe.Plug</code> in your router ensures that your schema is type
 checked at compile time. This means that if you misspell a type and do
 <code>list_of(:pots)</code> you’ll be notified that the type you reference in
 your schema doesn’t exist.</p>

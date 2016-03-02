@@ -3,7 +3,7 @@
 
   <head>
   <meta charset="utf-8">
-  <title>Learning GraphQL</title>
+  <title>Absinthe: Learning GraphQL</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <!-- ok >
@@ -17,8 +17,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
 
-  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/touch/apple-touch-icon-precomposed.png">
-  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/img/favicon.ico">
 
   <script src="/js/main.js"></script>
 </head>
@@ -59,14 +59,55 @@ capabilities and requirements.</p>
 
 <p>While GraphQL is commonly thought of as an API technology for
 frontend applications (especially <a href="https://facebook.github.io/relay/">Relay</a>),
-it’s generally applicable for other uses, too.</p>
+it’s generally applicable.</p>
 
-<p>Before using Absinthe, you should familiarize yourself with GraphQL in
-general. (Just keep in mind you’ll be writing Elixir, not JavaScript!)</p>
+<h2 id="example">Example</h2>
 
-<p>Here are some resources that you may find useful:</p>
+<p>Here’s an example GraphQL query document that you might send to a
+server to query for specific user information:</p>
+
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="err">{</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">id:</span> <span class="m">123</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">first_name</span>
+    <span class="n">last_name</span>
+    <span class="n">avatar_url</span><span class="err">(</span><span class="ss">size:</span> <span class="sd">"</span><span class="s2">thumb"</span><span class="err">)</span>
+    <span class="n">friends</span><span class="err">(</span><span class="ss">limit:</span> <span class="m">3</span><span class="err">)</span> <span class="err">{</span>
+      <span class="n">first_name</span>
+    <span class="err">}</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+</figure>
+
+<p>Provided that the server’s GraphQL schema supported the fields you’ve
+requested, you’d get back exactly what you want:</p>
+
+<figure class="codeblock"><pre><code class="language-json highlight"><span class="p">{</span><span class="w">
+  </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nt">"user"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nt">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jane"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"last_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Avery"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"avatar_url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"http://example.absinthe-graphql.org/img/users/123-thumb.jpg"</span><span class="p">,</span><span class="w">
+      </span><span class="nt">"friends"</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w">
+        </span><span class="p">{</span><span class="nt">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="nt">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jack"</span><span class="p">},</span><span class="w">
+        </span><span class="p">{</span><span class="nt">"first_name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Jill"</span><span class="p">},</span><span class="w">
+      </span><span class="p">]</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span></code></pre>
+</figure>
+
+<p>If we requested fields that weren’t supported by the schema defined on
+the server, forgot required arguments, or passed arguments that were
+invalid, the server would let us know via helpful error messages, all
+without manual, custom-written intervention by the schema writer.</p>
+
+<p>Plus, the schema <a href="/guides/introspection">can be introspected</a> by clients.</p>
 
 <h2 id="resources">Resources</h2>
+
+<p>Here are some resources that you may find useful. Just keep in mind
+you’ll be writing Elixir, not JavaScript!</p>
 
 <ul>
   <li>

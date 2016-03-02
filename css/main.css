@@ -1194,8 +1194,8 @@ body.collection article, body.series article{
 -------------------------------------------------------------------  */
 #page-header{
     background-attachment: fixed;
-    background-color: #fff;
-    background-image: url('/img/bg.jpg');
+    background-color: rgb(89, 130, 85);
+    background-image: url("/img/bg.jpg");
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -1233,6 +1233,7 @@ body.collection article, body.series article{
 }
 #page-navigation a{
     display: block;
+    font-size: 14px;
     margin: 15px 15px 15px 0;
     width: 100%;
 }
