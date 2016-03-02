@@ -61,7 +61,9 @@
     
       <li><a href='/tutorial/scalar-types/'>Scalar Types</a></li>
     
-      <li><a href='/tutorial/fragments/'>Fragments</a></li>
+      <li><a href='/tutorial/complex-arguments/'>Complex Arguments</a></li>
+    
+      <li><a href='/tutorial/conclusion/'>Conclusion</a></li>
     
   </ol>
 </nav>
@@ -90,13 +92,15 @@ user type, and then create a query in our schema that takes an id
 argument.</p>
 
 <figure class="codeblock"><figcaption class="filename">in web/schema/types</figcaption>
-<pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:user</span> <span class="k">do</span>
+<pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"</span><span class="s2">A user of the blog"</span>
+<span class="n">object</span> <span class="ss">:user</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:id</span><span class="p">,</span> <span class="ss">:id</span>
   <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:email</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span>
 <span class="k">end</span>
 
+<span class="nv">@desc</span> <span class="sd">"</span><span class="s2">A blog post"</span>
 <span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
   <span class="n">field</span> <span class="ss">:title</span><span class="p">,</span> <span class="ss">:string</span>
   <span class="n">field</span> <span class="ss">:body</span><span class="p">,</span> <span class="ss">:string</span>
@@ -106,9 +110,12 @@ argument.</p>
 
 <figure class="codeblock"><figcaption class="filename">web/schema.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Get all blog posts"</span>
   <span class="n">field</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span><span class="o">.</span><span class="n">all</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
+
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Get a user of the blog"</span>
   <span class="n">field</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">type:</span> <span class="ss">:user</span> <span class="k">do</span>
     <span class="n">arg</span> <span class="ss">:id</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
     <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="o">/</span><span class="m">2</span>
@@ -131,7 +138,10 @@ them at work, let’s look at our resolver.</p>
 <span class="k">end</span></code></pre>
 </figure>
 
-<p>The second argument to every resolve function contains the GraphQL
+<p>Resolve functions are expected to return either <code>{:ok, item}</code> or
+<code>{:error, reason | [reason, ...]}</code>.</p>
+
+<p>The first argument to every resolve function contains the GraphQL
 arguments of the query / mutation. Our schema marks the <code>:id</code> argument as
 <code>non_null</code>, so we can be certain we will receive it and just pattern
 match directly. If <code>:id</code> is left out of the query, Absinthe will

@@ -3,7 +3,7 @@
 
   <head>
   <meta charset="utf-8">
-  <title>Fragments</title>
+  <title>Conclusion</title>
   <link rel="stylesheet" href="/css/main.css">
 
   <!-- ok >
@@ -61,7 +61,9 @@
     
       <li><a href='/tutorial/scalar-types/'>Scalar Types</a></li>
     
-      <li><a href='/tutorial/fragments/' class="active">Fragments</a></li>
+      <li><a href='/tutorial/complex-arguments/'>Complex Arguments</a></li>
+    
+      <li><a href='/tutorial/conclusion/' class="active">Conclusion</a></li>
     
   </ol>
 </nav>
@@ -69,47 +71,17 @@
 
     <article>
       <header>
-        <h1>Fragments</h1>
+        <h1>Conclusion</h1>
       </header>
       
-<p>What is a blog without insightful and constructive commentary? Let’s
-give the people a voice!</p>
+<p>With this we have a basic GraphQL based API for a blog. Head on over to <a href="http://github.com/absinthe-graphql/absinthe_example">the github page</a> if you want the final code.</p>
 
-<p>There’s a twist here though. In the spirit of fostering quality online
-dialog, we’re going to allow comments both directly on the post, as
-well as on other comments. For mutations we’ll want to accept both
-post and comment arguments. For querying a comment, we’re going to
-need some fancier GraphQL features.</p>
+<p>We hope to expand this tutorial to include a comment system that will acquaint you
+with Union types and Fragments in the coming days.</p>
 
-<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">mutation</span> <span class="n">CreateComment</span> <span class="err">{</span>
-  <span class="n">comment</span><span class="err">(</span><span class="ss">post:</span> <span class="err">{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">})</span>
-<span class="err">}</span>
-<span class="k">mutation</span> <span class="n">CreateReply</span> <span class="err">{</span>
-  <span class="n">comment</span><span class="err">(</span><span class="ss">comment:</span> <span class="err">{</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">})</span>
-<span class="err">}</span>
-
-<span class="k">query</span> <span class="n">UserComments</span> <span class="err">{</span>
-  <span class="n">user</span><span class="err">(</span><span class="ss">id:</span> <span class="sd">"</span><span class="s2">1"</span><span class="err">)</span> <span class="err">{</span>
-    <span class="n">comments</span> <span class="err">{</span>
-      <span class="n">subject</span> <span class="err">{</span>
-        <span class="n">id</span>
-        <span class="o">...</span> <span class="k">on</span> <span class="n">Post</span> <span class="err">{</span>
-          <span class="n">title</span>
-        <span class="err">}</span>
-        <span class="o">...</span> <span class="k">on</span> <span class="n">Comment</span> <span class="err">{</span>
-          <span class="n">body</span>
-          <span class="n">author</span> <span class="err">{</span>
-            <span class="n">name</span>
-          <span class="err">}</span>
-        <span class="err">}</span>
-      <span class="err">}</span>
-    <span class="err">}</span>
-  <span class="err">}</span>
-<span class="err">}</span></code></pre>
-<figcaption class="description">Operations we want to support</figcaption>
-</figure>
-
-<p>Each comment has a subject. That subject can be either a post or another comment.</p>
+<p>Head on over to the <a href="/guides">Guides</a> section
+for further reading, and see the <a href="/community">Community</a>
+for information on how to get help, ask questions, or contribute!</p>
 
       
     </article>
