@@ -69,6 +69,8 @@
     
       <li><a href='/guides/adapters/'>Adapters</a></li>
     
+      <li><a href='/guides/ecto-best-practices/'>Ecto Best Practices</a></li>
+    
   </ol>
 </nav>
 
@@ -156,13 +158,13 @@ like:</p>
 on to <code>Absinthe.run</code> as the context. This is how you should handle logic that
 uses headers – most notably, Authentication.</p>
 
-<p>For more information, see the <a href="context/">Context guide</a>.</p>
+<p>For more information, see the <a href="/guides/context/">Context guide</a>.</p>
 
 <h2 id="general-usage">General Usage</h2>
 
 <p>This plug supports requests in a number of ways:</p>
 
-<h3 id="via-a-get">Via a GET</h3>
+<h3 id="a-namevia-a-getvia-a-geta"><a name="via-a-get">Via a GET</a></h3>
 
 <p>With a query string:</p>
 
@@ -186,7 +188,7 @@ we recommend using one of the POST options below instead, putting the <code>quer
 </figure>
 
 <p>(We could also pull either <code>query</code> or <code>variables</code> out to the query string, just
-as in the <a href="./README.md#via-a-get">GET example</a>.)</p>
+as in the <a href="#via-a-get">GET example</a>.)</p>
 
 <h3 id="via-an-applicationgraphql-post">Via an <code>application/graphql</code> POST</h3>
 
@@ -209,7 +211,7 @@ as in the <a href="./README.md#via-a-get">GET example</a>.)</p>
 of the official
 <a href="https://github.com/graphql/express-graphql">express-graphql</a> middleware.</p>
 
-<p>In the <a href="./README.md#example">example above</a>, we went over the various ways to
+<p>In the <a href="#example">example above</a>, we went over the various ways to
 make a request, but here are the details:</p>
 
 <p>Once installed at a path, the plug will accept requests with the

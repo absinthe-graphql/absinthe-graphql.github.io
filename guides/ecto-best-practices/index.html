@@ -1,0 +1,200 @@
+<!DOCTYPE HTML>
+<html class="no-js" lang="en">
+
+  <head>
+  <meta charset="utf-8">
+  <title>Absinthe: Ecto Best Practices</title>
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- ok >
+
+  <!-- you don't need to keep this, but it's cool for stats! -->
+  <meta name="generator" content="Nanoc 4.1.4">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Enable responsiveness on mobile devices-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-precomposed.png">
+  <link rel="shortcut icon" href="/img/favicon.ico">
+
+  <script src="/js/main.js"></script>
+</head>
+
+
+<body class="preload markdown-body collection">
+
+  <header id="page-header" role="banner">
+  <a href="/"><h1 class="logo">Absinthe</h1></a>
+  <nav id="main-navigation">
+  <ol>
+    <li><a href='/learning-graphql/'>GraphQL?</a></li>
+    <li><a href='/tutorial/'>Tutorial</a></li>
+    <li><a href='/guides/' class="active">Guides</a></li>
+    <li><a href='/community/'>Community</a></li>
+    <li><a href='/projects/'>Projects</a></li>
+    <li>
+      <a class="icon-link" target="github" href="https://github.com/absinthe-graphql">
+        <svg aria-hidden="true" height="28" role="img" version="1.1" viewBox="0 0 16 16" width="28"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59 0.4 0.07 0.55-0.17 0.55-0.38 0-0.19-0.01-0.82-0.01-1.49-2.01 0.37-2.53-0.49-2.69-0.94-0.09-0.23-0.48-0.94-0.82-1.13-0.28-0.15-0.68-0.52-0.01-0.53 0.63-0.01 1.08 0.58 1.23 0.82 0.72 1.21 1.87 0.87 2.33 0.66 0.07-0.52 0.28-0.87 0.51-1.07-1.78-0.2-3.64-0.89-3.64-3.95 0-0.87 0.31-1.59 0.82-2.15-0.08-0.2-0.36-1.02 0.08-2.12 0 0 0.67-0.21 2.2 0.82 0.64-0.18 1.32-0.27 2-0.27 0.68 0 1.36 0.09 2 0.27 1.53-1.04 2.2-0.82 2.2-0.82 0.44 1.1 0.16 1.92 0.08 2.12 0.51 0.56 0.82 1.27 0.82 2.15 0 3.07-1.87 3.75-3.65 3.95 0.29 0.25 0.54 0.73 0.54 1.48 0 1.07-0.01 1.93-0.01 2.2 0 0.21 0.15 0.46 0.55 0.38C13.71 14.53 16 11.53 16 8 16 3.58 12.42 0 8 0z"></path></svg>
+      </a>
+    </li>
+  </ol>
+</nav>
+
+</header>
+
+
+  <main id="main">
+    <nav id="page-navigation">
+  <p class="page-navigation-header">guides</p>
+  <ol>
+    
+      <li><a href='/guides/'>Guide Index</a></li>
+    
+      <li><a href='/guides/writing-schemas/'>Writing Schemas</a></li>
+    
+      <li><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
+    
+      <li><a href='/guides/context/'>Context</a></li>
+    
+      <li><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
+    
+      <li><a href='/guides/introspection/'>Introspection</a></li>
+    
+      <li><a href='/guides/deprecation/'>Deprecation</a></li>
+    
+      <li><a href='/guides/variables/'>Variables</a></li>
+    
+      <li><a href='/guides/adapters/'>Adapters</a></li>
+    
+      <li><a href='/guides/ecto-best-practices/' class="active">Ecto Best Practices</a></li>
+    
+  </ol>
+</nav>
+
+
+    <article>
+      <header>
+        <h1>Ecto Best Practices</h1>
+      </header>
+      
+<p>This guide is going to grow as we develop more tooling around Ecto integrations
+(it’s a priority on <a href="/roadmap">our roadmap</a>, but there are some important things
+we can point out now that might be helpful.</p>
+
+<h2 id="avoiding-n1-queries">Avoiding N+1 Queries</h2>
+
+<p>In general, you want to make sure that when accessing Ecto associations that you
+preload the data in the top level resolver functions to avoid N+1 queries.</p>
+
+<p>Imagine this scenario: You have posts and categories. Categories can have a
+parent category. You want to list all categories, and if they have a parent,
+include that along with its name.</p>
+
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="err">{</span>
+  <span class="n">categories</span> <span class="err">{</span>
+    <span class="n">parent</span> <span class="err">{</span>
+      <span class="n">name</span>
+    <span class="err">}</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+<figcaption class="description">A deceptively simple query.</figcaption>
+</figure>
+
+<p>If you write your schema like this, you’re going to have a <em>bad</em> time:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:category</span> <span class="k">do</span>
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Parent category to the existing category"</span>
+  <span class="n">field</span> <span class="ss">:parent</span><span class="p">,</span> <span class="ss">:category</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="p">%{</span><span class="ss">source:</span> <span class="n">category</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="c1"># exact mechanism unimportant</span>
+      <span class="n">query_parent</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="no">Category</span> <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">A naive approach, subject to N+1 issues.</figcaption>
+</figure>
+
+<p>What this schema will do when presented with the GraphQL query is
+run <code>Category |&gt; Repo.all</code>, which will retrieve <em>N</em> categories. Then for each
+<em>N</em> category it will resolve child fields, which runs our <code>query_parent(category)</code>
+function, resulting in <em>N+1</em> calls to the database.</p>
+
+<p>Instead, structure your schema in such a way that you can preload all desired
+data:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:category</span> <span class="k">do</span>
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Parent category to the existing category"</span>
+  <span class="n">field</span> <span class="ss">:parent</span><span class="p">,</span> <span class="ss">:category</span>
+<span class="k">end</span>
+
+<span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="no">Category</span>
+      <span class="o">|&gt;</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">preload</span><span class="p">(</span><span class="ss">:parent</span><span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Always preloading the parent.</figcaption>
+</figure>
+
+<p>Now we always make 2 calls to the database; once to load all queries, and then
+a second time to handle the preload.</p>
+
+<p>Astute readers will note that there’s a downside here. We load the parent from
+the database regardless of whether the GraphQL query asks for it (and,
+therefore, regardless of whether Absinthe will return it in the response).</p>
+
+<p>It’d be nice if we could only query the database when the parent is asked for.</p>
+
+<h2 id="its-diy-for-now">It’s DIY (For Now)</h2>
+
+<p>Supporting this feature more automatically is on the <a href="/roadmap">roadmap</a>, but
+here’s the approach:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">info</span> <span class="o">-&gt;</span>
+      <span class="n">preloads</span> <span class="o">=</span> <span class="n">derive_preloads</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
+      <span class="no">Category</span>
+      <span class="o">|&gt;</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">preload</span><span class="p">(</span><span class="o">^</span><span class="n">preloads</span><span class="p">)</span>
+      <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">The sneaky approach. Coming soon!</figcaption>
+</figure>
+
+<p>In this example, <code>derive_preloads/1</code> takes the second argument to the resolver
+(a <a href="https://hexdocs.pm/absinthe/Absinthe.Execution.Field.html">Absinthe.Execution.Field</a>
+struct), which contains the current <code>ast_node</code> – using this, we can peek ahead
+and see what child fields will be asked for, then return the preloads that are
+actually needed.</p>
+
+<p>Sounds simple, right? The devil is in the details, but we hope to be able to
+release this soon as part of a new <code>Absinthe.Ecto</code> project.</p>
+
+    </article>
+
+  </main>
+
+  <footer id="page-footer">
+  <p>Please report any issues & contribute changes to the <a href="https://github.com/absinthe-graphql/website" target="github-website">website repository</a>. Thanks!</p>
+  <p>Background image <a href="https://www.flickr.com/photos/anitacanita/4635683623">"green"</a> by Ana C., license available <a href="https://creativecommons.org/licenses/by-nc-nd/2.0/">here</a>.</p>
+</footer>
+
+
+</body>
+</html>
