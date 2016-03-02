@@ -139,7 +139,7 @@ them at work, let’s look at our resolver.</p>
 </figure>
 
 <p>Resolve functions are expected to return either <code>{:ok, item}</code> or
-<code>{:error, reason | [reason, ...]}</code>.</p>
+<code>{:error, binary | [binary, ...]}</code>.</p>
 
 <p>The first argument to every resolve function contains the GraphQL
 arguments of the query / mutation. Our schema marks the <code>:id</code> argument as
