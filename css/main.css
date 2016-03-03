@@ -777,9 +777,9 @@ html, body{
     min-height: 100%;
     min-width: 980px;
     width: 100%;
-    z-index: 2;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    z-index: 2;/* Phone *//* Nest *//* Smaller Screens */
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     html, body{
         min-width: 100%;
     }
@@ -1124,9 +1124,9 @@ a:active, a:hover{
 -------------------------------------------------------------------  */
 #main{
     border-radius: 3px;
-    padding: 70px 15px 15px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    padding: 70px 15px 15px;/* Phone *//* Nest *//* Smaller Screens */
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #main{
         margin: 0 0 0 0;
         width: 100%;
@@ -1136,9 +1136,9 @@ a:active, a:hover{
 body.collection, body.series{/* article */
 }
 body.collection article, body.series article{
-    margin-left: 200px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    margin-left: 200px;/* Phone *//* Nest *//* Smaller Screens */
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.collection article, body.series article{
         margin-left: 0;
     }
@@ -1154,9 +1154,9 @@ body.collection article, body.series article{
     top: 10px;
     right: 10px;
     height: 32px;
-    width: 32px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 32px;/* Phone *//* Nest *//* Smaller Screens */
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #mobile-menu{
         display: block;
     }
@@ -1166,7 +1166,7 @@ body.collection article, body.series article{
     float: right;
     margin: 32px 25px 0 0;/* a */
 }
-/* Nest */
+/* Smaller Screens */
 body.mobile-nav-open #main-navigation{
     display: block;
     position: absolute;
@@ -1175,19 +1175,18 @@ body.mobile-nav-open #main-navigation{
     transform: translateX(-50%);
     margin: 10px 0 0 0;
 }
+/* Nest */
 /* Phone */
-/* Smaller then Avg  Screens */
 #main-navigation li{
     display: inline-block;
     min-width: 140px;
     text-align: center;
-    width: 16%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest *//* &:last-child */
+    width: 16%;/* Phone *//* Nest *//* Smaller Screens *//* Phone *//* Nest *//* Smaller Screens *//* &:last-child */
 }
-/* Smallerish Screens */
 #main-navigation li:last-child{
     min-width: 50px;
     margin: 0 0 0 10px;
-    width: 50px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 50px;/* Phone *//* Nest *//* Smaller Screens */
 }
 /* li */
 #main-navigation a{
@@ -1198,7 +1197,7 @@ body.mobile-nav-open #main-navigation{
     margin: 0 5%;
     opacity: 0.9;
     text-transform: uppercase;
-    width: 90%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 90%;/* Phone *//* Nest *//* Smaller Screens *//* Phone *//* Nest *//* Smaller Screens */
 }
 /* &:not(.icon-link) */
 #main-navigation a svg{
@@ -1226,24 +1225,35 @@ body.mobile-nav-open #main-navigation{
 #main-navigation a:hover svg{
     fill: #BEDB89;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #main-navigation{
         display: none;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 1400px){
+    #main-navigation li{
+        min-width: 120px;
+    }
+}
+@media all and (max-width: 980px){
     #main-navigation li{
         width: 100%;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #main-navigation li:last-child{
         margin: 0;
         min-width: 100%;
         width: 100%;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 1400px){
+    #main-navigation a{
+        font-size: 12px;
+        margin: 0 3%;
+    }
+}
+@media all and (max-width: 980px){
     #main-navigation a{
         margin: 0 0 20px 0;
         width: 100%;
@@ -1286,9 +1296,9 @@ body.mobile-nav-open #page-header{
     height: 150px;
     margin: 0;
     padding: 0;
-    width: 300px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 300px;/* Phone *//* Nest *//* Smaller Screens */
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #page-header h1{
         background-position: center center;
         left: 50%;
@@ -1303,49 +1313,48 @@ body.mobile-nav-open #page-header{
 #page-navigation{
     float: left;/* a */
 }
-/* Nest */
+/* Smaller Screens */
 #page-navigation .page-navigation-header{
     font-size: 13px;
     font-weight: bold;
     text-transform: uppercase;
 }
-/* Phone */
+/* Nest */
 #page-navigation ol{
-    margin: 0 50px 50px 0;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    margin: 0 50px 50px 0;/* Phone *//* Nest *//* Smaller Screens */
 }
 /* ol */
 #page-navigation li{
-    border-bottom: 1px solid rgb(237, 222, 230);/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest *//* @mixin bodhi phone */
+    border-bottom: 1px solid rgb(237, 222, 230);/* Phone *//* Nest *//* Smaller Screens *//* @mixin bodhi smaller-then-nest */
 }
 /* li */
 #page-navigation a{
     display: block;
     font-size: 14px;
     margin: 15px 15px 15px 0;
-    width: 100%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 100%;/* Phone *//* Nest *//* Smaller Screens */
 }
-/* Smaller then Avg  Screens */
+/* Phone */
 #page-navigation a:hover{
     color: rgb(132, 72, 93);
     text-decoration: none;
 }
-/* Smallerish Screens */
 #page-navigation a.active{
     font-weight: 700;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #page-navigation{
         float: none;
         margin-bottom: 30px;
         text-align: center;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #page-navigation ol{
         margin: 0;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #page-navigation li{
         border-bottom: none;
         margin-bottom: 10px;
@@ -1367,7 +1376,7 @@ body.mobile-nav-open #page-header{
         content: none;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     #page-navigation a{
         display: inline-block;
         font-size: 12px;
@@ -1388,14 +1397,14 @@ body.splash{
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
-    min-height: 660px;/* #mobile-menu *//* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* $page-footer */
+    min-height: 660px;/* #mobile-menu *//* Phone *//* Nest *//* $page-footer */
 }
-body.splash #mobile-menu{/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+body.splash #mobile-menu{/* Phone *//* Nest *//* Smaller Screens */
 }
-/* Nest */
+/* Smaller Screens */
 body.splash #main-navigation{
     clear: both;
-    width: 100%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 100%;/* Phone *//* Nest *//* Smaller Screens */
 }
 /* #main-navigation  */
 body.splash #main{
@@ -1404,7 +1413,7 @@ body.splash #main{
     padding: 0;
     position: relative;
     text-align: center;
-    background-color: transparent;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    background-color: transparent;/* Phone *//* Nest *//* Smaller Screens */
 }
 /* #main */
 body.splash h1{
@@ -1415,7 +1424,7 @@ body.splash h1{
     height: 425px;
     margin: 0;
     padding: 0;
-    width: 700px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    width: 700px;/* Phone *//* Nest *//* Smaller Screens */
 }
 /* h1 */
 body.splash h2{
@@ -1436,7 +1445,7 @@ body.splash .splash-content{
     top: 50%;
     left: 50%;
     text-align: center;
-    transform: translate(-50%, -50%);/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+    transform: translate(-50%, -50%);/* Phone *//* Nest *//* Smaller Screens */
 }
 /* .splash-content */
 body.splash #page-footer{
@@ -1448,17 +1457,17 @@ body.splash #page-footer{
 body.splash #page-footer a{
     color: #BEDB89;
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash #mobile-menu{
         display: none;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash{
         min-height: 750px;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash #main-navigation{
         display: block;
         position: absolute;
@@ -1468,19 +1477,19 @@ body.splash #page-footer a{
         margin: 10px 0 0 0;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash #main{
         margin-left: 0;
         margin-right: 0;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash h1{
         height: 174px;
         width: 300px;
     }
 }
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+@media all and (max-width: 980px){
     body.splash .splash-content{
         top: 30px;
         transform: translateX(-50%);
