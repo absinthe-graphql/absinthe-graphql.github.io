@@ -703,7 +703,7 @@ td, th{
 /*  ------------------------------------------------------------------
   Extends > Image Replacement
 -------------------------------------------------------------------  */
-#page-header h1, body.splash h1{
+#mobile-menu, #page-header h1, body.splash h1{
     background-color: transparent;
     color: transparent;
     border: 0;
@@ -712,7 +712,7 @@ td, th{
     text-shadow: none;
     white-space: nowrap;
 }
-#page-header h1:before, body.splash h1:before{
+#mobile-menu:before, #page-header h1:before, body.splash h1:before{
     content: "";
     display: block;
     height: 100%;
@@ -777,8 +777,14 @@ html, body{
     min-height: 100%;
     min-width: 980px;
     width: 100%;
-    z-index: 1;
+    z-index: 2;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    html, body{
+        min-width: 100%;
+    }
+}
+/* html,.. */
 body{
     color: #333;
     font-family: "Helvetica Neue",Helvetica,arial,nimbussansl,liberationsans,freesans,clean,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
@@ -857,11 +863,11 @@ a:active, a:hover{
     padding: 2px 10px;
 }
 .markdown-body figure .description{
-    border: 1px rgb(243, 243, 241) solid;
+    border: 1px rgb(243, 243, 242) solid;
     border-top: 0;
     font-size: 11px;
     padding: 4px 10px;
-    color: rgb(135, 130, 120);
+    color: rgb(134, 130, 121);
     text-align: right;
 }
 .markdown-body figure pre{
@@ -1118,30 +1124,72 @@ a:active, a:hover{
 -------------------------------------------------------------------  */
 #main{
     border-radius: 3px;
-    padding: 70px 15px 15px;
+    padding: 70px 15px 15px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #main{
+        margin: 0 0 0 0;
+        width: 100%;
+    }
+}
+/* #main */
+body.collection, body.series{/* article */
 }
 body.collection article, body.series article{
-    margin-left: 200px;
+    margin-left: 200px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.collection article, body.series article{
+        margin-left: 0;
+    }
 }
 /* body.collection */
 /*  ------------------------------------------------------------------
   Structure > Main Navigation
 -------------------------------------------------------------------  */
+#mobile-menu{
+    background-image: url("/img/hamburger.svg");
+    display: none;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    height: 32px;
+    width: 32px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #mobile-menu{
+        display: block;
+    }
+}
+/* #mobile-menu  */
 #main-navigation{
     float: right;
     margin: 32px 25px 0 0;/* a */
 }
+/* Nest */
+body.mobile-nav-open #main-navigation{
+    display: block;
+    position: absolute;
+    top: 180px;
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 10px 0 0 0;
+}
+/* Phone */
+/* Smaller then Avg  Screens */
 #main-navigation li{
     display: inline-block;
     min-width: 140px;
     text-align: center;
-    width: 16%;
+    width: 16%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest *//* &:last-child */
 }
+/* Smallerish Screens */
 #main-navigation li:last-child{
     min-width: 50px;
     margin: 0 0 0 10px;
-    width: 50px;
+    width: 50px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* li */
 #main-navigation a{
     color: #fff;
     display: block;
@@ -1150,7 +1198,7 @@ body.collection article, body.series article{
     margin: 0 5%;
     opacity: 0.9;
     text-transform: uppercase;
-    width: 90%;
+    width: 90%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
 /* &:not(.icon-link) */
 #main-navigation a svg{
@@ -1178,6 +1226,28 @@ body.collection article, body.series article{
 #main-navigation a:hover svg{
     fill: #BEDB89;
 }
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #main-navigation{
+        display: none;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #main-navigation li{
+        width: 100%;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #main-navigation li:last-child{
+        margin: 0;
+        min-width: 100%;
+        width: 100%;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #main-navigation a{
+        margin: 0 10px 20px;
+    }
+}
 /* #main-navigation */
 /*  ------------------------------------------------------------------
   Structure > Page Footer
@@ -1195,11 +1265,15 @@ body.collection article, body.series article{
 #page-header{
     background-attachment: fixed;
     background-color: rgb(89, 130, 85);
-    background-image: url("/img/bg.jpg");
+    background-image: url('/img/bg.jpg');
     background-position: top center;
     background-repeat: no-repeat;
     background-size: cover;
     height: 103px;
+    transition: height 1s;/* h1 */
+}
+body.mobile-nav-open #page-header{
+    height: 500px;
 }
 #page-header h1{
     background-image: url("/img/absinthe-dark.svg");
@@ -1211,7 +1285,15 @@ body.collection article, body.series article{
     height: 150px;
     margin: 0;
     padding: 0;
-    width: 300px;
+    width: 300px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #page-header h1{
+        background-position: center center;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+    }
 }
 /* #page-header */
 /*  ------------------------------------------------------------------
@@ -1220,29 +1302,78 @@ body.collection article, body.series article{
 #page-navigation{
     float: left;/* a */
 }
+/* Nest */
 #page-navigation .page-navigation-header{
     font-size: 13px;
     font-weight: bold;
     text-transform: uppercase;
 }
+/* Phone */
 #page-navigation ol{
-    margin: 0 50px 50px 0;
+    margin: 0 50px 50px 0;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* ol */
 #page-navigation li{
-    border-bottom: 1px solid rgb(237, 222, 230);
+    border-bottom: 1px solid rgb(237, 222, 230);/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest *//* @mixin bodhi phone */
 }
+/* li */
 #page-navigation a{
     display: block;
     font-size: 14px;
     margin: 15px 15px 15px 0;
-    width: 100%;
+    width: 100%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* Smaller then Avg  Screens */
 #page-navigation a:hover{
     color: rgb(132, 72, 93);
     text-decoration: none;
 }
+/* Smallerish Screens */
 #page-navigation a.active{
     font-weight: 700;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #page-navigation{
+        float: none;
+        margin-bottom: 30px;
+        text-align: center;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #page-navigation ol{
+        margin: 0;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #page-navigation li{
+        border-bottom: none;
+        margin-bottom: 10px;
+        position: relative;
+        display: inline-block;
+    }
+    #page-navigation li:after{
+        display: block;
+        content: "";
+        background-color: rgb(243, 242, 242);
+        height: 8px;
+        width: 8px;
+        position: absolute;
+        right: -4px;
+        top: 50%;
+        transform: translateY(-50%) rotate(45deg);
+    }
+    #page-navigation li:last-child:after{
+        content: none;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    #page-navigation a{
+        display: inline-block;
+        font-size: 12px;
+        margin: 0;
+        padding: 0 20px;
+        width: auto;
+    }
 }
 /* #main-navigation */
 /*  ------------------------------------------------------------------
@@ -1256,20 +1387,34 @@ body.splash{
     background-repeat: no-repeat;
     background-size: cover;
     position: relative;
-    min-height: 660px;/* $page-footer */
+    min-height: 660px;/* #mobile-menu *//* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* $page-footer */
 }
+body.splash #mobile-menu{/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+/* Nest */
 body.splash #main-navigation{
     clear: both;
-    width: 100%;
+    width: 100%;/* Smallerish Screens *//* Smaller then Avg  Screens *//* li */
 }
+/* Nest */
+body.splash #main-navigation li{/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* a */
+}
+/* Nest */
+body.splash #main-navigation li a{/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+/* Phone */
+body.splash #main-navigation li:last-child{/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
+}
+/* #main-navigation  */
 body.splash #main{
     height: 100%;
     min-height: 660px;
     padding: 0;
     position: relative;
     text-align: center;
-    background-color: none;
+    background-color: transparent;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* #main */
 body.splash h1{
     background-image: url("/img/absinthe.svg");
     opacity: 0.8;
@@ -1278,8 +1423,9 @@ body.splash h1{
     height: 425px;
     margin: 0;
     padding: 0;
-    width: 700px;
+    width: 700px;/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* h1 */
 body.splash h2{
     opacity: 0.8;
     color: #fff;
@@ -1297,8 +1443,9 @@ body.splash .splash-content{
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);/* Smallerish Screens *//* Smaller then Avg  Screens *//* Phone *//* Nest */
 }
+/* .splash-content */
 body.splash #page-footer{
     color: #fff;
     position: absolute;
@@ -1307,5 +1454,60 @@ body.splash #page-footer{
 }
 body.splash #page-footer a{
     color: #BEDB89;
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #mobile-menu{
+        display: none;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash{
+        min-height: 750px;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #main-navigation{
+        display: block;
+        position: absolute;
+        top: 300px;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 10px 0 0 0;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #main-navigation li{
+        width: 100%;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #main-navigation li:last-child{
+        margin: 0;
+        min-width: 100%;
+        width: 100%;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #main-navigation li a{
+        margin: 0 10px 20px;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash #main{
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash h1{
+        height: 174px;
+        width: 300px;
+    }
+}
+@media only screen and (min-device-width : 320px) and (max-device-width : 480px){
+    body.splash .splash-content{
+        top: 30px;
+        transform: translateX(-50%);
+    }
 }
 /* body.splash */
