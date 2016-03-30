@@ -187,10 +187,30 @@ and/or <a href="https://facebook.github.io/graphql/#sec-Non-null">NonNull</a>.
   <figcaption class="description">GraphiQL in action.</figcaption>
 </figure>
 
-<p class="notice">
-We recommend using the pre-built <a href="http://electron.atom.io/">Electron</a>-based wrapper application, <a href="https://github.com/skevy/graphiql-app">GraphiQL.app</a>, which makes it very easy to introspect your
-development and production Absinthe applications.
-</p>
+<p>Absinthe provides GraphiQL via a plug in <code>absinthe_plug</code>. See the <a href="http://absinthe-graphql.org/guides/plug-phoenix">Plug and Phoenix Guide</a>
+for how to install that library. Once installed, usage is simple as</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+</figure>
+
+<p>If you want to use it at a particular path (in this case <code>graphiql</code> in your Phoenix
+router, simply do</p>
+
+<figure class="codeblock"><figcaption class="filename">router.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="n">get</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+</figure>
+
+<p>This can be trivially reserved to just the <code>:dev</code> elixir environment by doing:</p>
+
+<figure class="codeblock"><figcaption class="filename">router.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">if</span> <span class="no">Mix</span><span class="o">.</span><span class="n">env</span> <span class="o">==</span> <span class="ss">:dev</span>
+  <span class="n">get</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span>
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>If you’d prefer to use a desktop application, we recommend using the pre-built
+<a href="http://electron.atom.io">Electron</a>-based wrapper application,
+<a href="https://github.com/skevy/graphiql-app">GraphiQL.app</a>.</p>
 
 <h3 id="graphql-hub">GraphQL Hub</h3>
 
