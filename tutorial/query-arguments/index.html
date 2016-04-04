@@ -113,13 +113,13 @@ argument.</p>
 <pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
   <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Get all blog posts"</span>
   <span class="n">field</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span> <span class="k">do</span>
-    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Post</span><span class="o">.</span><span class="n">all</span><span class="o">/</span><span class="m">2</span>
+    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Blog</span><span class="o">.</span><span class="no">PostResolver</span><span class="o">.</span><span class="n">all</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 
   <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Get a user of the blog"</span>
   <span class="n">field</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">type:</span> <span class="ss">:user</span> <span class="k">do</span>
     <span class="n">arg</span> <span class="ss">:id</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:id</span><span class="p">)</span>
-    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span><span class="o">.</span><span class="n">find</span><span class="o">/</span><span class="m">2</span>
+    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Blog</span><span class="o">.</span><span class="no">PostResolver</span><span class="o">.</span><span class="n">find</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
 </figure>
@@ -128,8 +128,8 @@ argument.</p>
 return values. This powers a number of very helpful features. To see
 them at work, let’s look at our resolver.</p>
 
-<figure class="codeblock"><figcaption class="filename">web/resolver/user.ex</figcaption>
-<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span> <span class="k">do</span>
+<figure class="codeblock"><figcaption class="filename">web/resolvers/user_resolver.ex</figcaption>
+<pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">PostResolver</span> <span class="k">do</span>
   <span class="k">def</span> <span class="n">find</span><span class="p">(%{</span><span class="ss">id:</span> <span class="n">id</span><span class="p">},</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
     <span class="k">case</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="no">User</span><span class="p">,</span> <span class="n">id</span><span class="p">)</span> <span class="k">do</span>
       <span class="no">nil</span>  <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">User id </span><span class="si">#{</span><span class="n">id</span><span class="si">}</span><span class="s2"> not found"</span><span class="p">}</span>

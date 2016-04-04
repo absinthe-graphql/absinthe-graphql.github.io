@@ -88,8 +88,8 @@ or an email as the contact method for a user.</p>
 </figure>
 
 <figure class="codeblock"><pre><code class="language-graphql highlight"><span class="c1">#description "User with phone number"</span>
-<span class="k">mutation</span> <span class="n">CreateEmailUser</span> <span class="err">{</span>
-  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">phone"</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">foo@bar.com"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
+<span class="k">mutation</span> <span class="n">CreatePhoneUser</span> <span class="err">{</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">phone"</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">867-5309"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
 <span class="err">}</span></code></pre>
 </figure>
 
@@ -138,7 +138,7 @@ suffix your input object type names with <code>_input</code></p>
     <span class="n">arg</span> <span class="ss">:contact</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:contact_input</span><span class="p">)</span>
     <span class="n">arg</span> <span class="ss">:password</span><span class="p">,</span> <span class="ss">:string</span>
 
-    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">User</span><span class="o">.</span><span class="n">create</span><span class="o">/</span><span class="m">2</span>
+    <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Blog</span><span class="o">.</span><span class="no">PostResolver</span><span class="o">.</span><span class="n">create</span><span class="o">/</span><span class="m">2</span>
   <span class="k">end</span>
 
 <span class="k">end</span></code></pre>
@@ -152,7 +152,7 @@ in your underlying data store and how things are presented by your GraphQL api.<
 
 <p>Our resolver might look something like this:</p>
 
-<figure class="codeblock"><figcaption class="filename">web/resolver/post.ex</figcaption>
+<figure class="codeblock"><figcaption class="filename">web/resolvers/post_resolver.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="k">def</span> <span class="n">create</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
   <span class="p">{</span><span class="n">contact_params</span><span class="p">,</span> <span class="n">user_params</span><span class="p">}</span> <span class="o">=</span> <span class="no">Map</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="ss">:contact</span><span class="p">)</span>
 
