@@ -83,9 +83,295 @@
         <h1>Relay</h1>
       </header>
       
-<p>Coming soon!</p>
+<p>While GraphQL specifies what queries, mutations, and object types should look
+like, Relay is a client-side implementation of an efficient data storage and
+(re-)fetching system that is designed to work with a GraphQL server.</p>
 
-<p><em>Until then, take a look at <a href="https://hexdocs.pm/absinthe_relay">the documentation</a>.</em></p>
+<p>To allow Relay to work its magic on the client side, all GraphQL queries and
+mutations need to follow certain conventions. <code>Absinthe.Relay</code> provides
+utilities to help you make your server-side schemas Relay-compatible while
+requiring only minimal changes to your existing code.</p>
+
+<p><code>Absinthe.Relay</code> supports three fundamental pieces of the Relay puzzle: <em>nodes</em>,
+which are normal GraphQL objects with a unique global ID scheme; <em>mutations</em>,
+which in Relay conform to a certain input and output structure; and
+<em>connections</em>, which provide enhanced functionality around many-to-one lists
+(most notably pagination).</p>
+
+<h2 id="using-absintherelay">Using Absinthe.Relay</h2>
+
+<p>Make sure you have the <a href="https://hex.pm/packages/absinthe_relay">absinthe_relay</a>
+package <a href="https://github.com/absinthe-graphql/absinthe_relay#installation">configured</a>
+as a dependency for your application.</p>
+
+<p>To add Relay support schemas should start with <code>use Absinthe.Relay.Schema</code>, eg:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Schema</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span>
+  <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Relay</span><span class="o">.</span><span class="no">Schema</span>
+
+  <span class="c1"># ...</span>
+
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>If you’re defining your types in a separate type module that you’re using via
+<code>import_types</code> in your schema, use the <code>Notation</code> module instead:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Schema</span><span class="o">.</span><span class="no">Types</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Notation</span>
+  <span class="kn">use</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Relay</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Notation</span>
+
+  <span class="c1"># ...</span>
+
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>Now you’re ready to implement the Relay features you need.</p>
+
+<h2 id="nodes">Nodes</h2>
+
+<p>To enable Relay to be clever about caching and (re-)fetching data objects, your
+server must assign a globally unique ID to each object before sending it down
+the wire. Absinthe will take care of this for you if you provide some additional
+information in your schema.</p>
+
+<p>First of all, you must define a <code>:node</code> interface in your schema. Rather than
+do this manually, <code>Absinthe.Relay</code> provides a macro so most of the configuration
+is handled for you.</p>
+
+<p>Use <code>node interface</code> in your schema:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">node</span> <span class="n">interface</span> <span class="k">do</span>
+  <span class="n">resolve_type</span> <span class="k">fn</span>
+    <span class="p">%</span><span class="no">YourApp</span><span class="o">.</span><span class="no">Model</span><span class="o">.</span><span class="no">Person</span><span class="p">{},</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="ss">:person</span>
+    <span class="p">%</span><span class="no">YourApp</span><span class="o">.</span><span class="no">Model</span><span class="o">.</span><span class="no">Business</span><span class="p">{},</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="ss">:business</span>
+    <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="no">nil</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="c1"># ... mutations, queries ...</span></code></pre>
+</figure>
+
+<p>For instance, if your query or mutation resolver returns:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%</span><span class="no">YourApp</span><span class="o">.</span><span class="no">Model</span><span class="o">.</span><span class="no">Business</span><span class="p">{</span><span class="ss">id:</span> <span class="m">19</span><span class="p">,</span> <span class="ss">business_name:</span> <span class="sd">"</span><span class="s2">ACME Corp."</span><span class="p">,</span> <span class="ss">employee_count:</span> <span class="m">52</span><span class="p">}}</span></code></pre>
+</figure>
+
+<p>Absinthe will pattern-match the value to determine that the object type is
+<code>:business</code>. This becomes important when you configure your <code>:business</code> type as a <code>node</code>:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">node</span> <span class="n">object</span> <span class="ss">:business</span> <span class="k">do</span>  <span class="c1"># &lt;-- notice the macro prefix "node"</span>
+  <span class="n">field</span> <span class="ss">:business_name</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
+  <span class="n">field</span> <span class="ss">:employee_count</span><span class="p">,</span> <span class="ss">:integer</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Notice the macro prefix, `node`</figcaption>
+</figure>
+
+<p>While it may appear that your <code>:business</code> object type only has two fields,
+<code>:business_name</code> and <code>:employee_count</code>, it actually has <em>three</em>. An <code>:id</code> field
+is configured for you because you used the <code>node object</code> macro, and because the
+<code>:node</code> interface knows how to identify the values returned from your resolvers,
+that <code>:id</code> field is automatically set-up to convert internal (in this case,
+numeric) IDs to the global ID scheme – an opaque string (like <code>"UWxf59AcjK="</code>)
+will be returned instead.</p>
+
+<p class="notice">
+<strong>Important:</strong> the global ID is generated based on the object's
+unique identifier, which by default is <strong>the value of its existing <code>:id</code>
+field</strong>. This is convenient, because if you are using Ecto, the
+primary key <code>:id</code> database field is typically enough to uniquely identify an
+object of a given type. It also means, however, that <i>the internal <code>:id</code> of a
+node object will not be available to be queried as <code>:id</code>.</i>
+</p>
+
+<ul>
+  <li>If you wish to generate your global IDs based on something other than the
+existing <code>:id</code> field (if, for instance, your internal IDs are returned as <code>_id</code>),
+provide the <code>:id_fetcher</code> option (see the <a href="https://hexdocs.pm/absinthe_relay/Absinthe.Relay.Node.html">documentation</a>).</li>
+  <li>If you wish to make your internal ID queryable, you must return it as a
+different field (eg, you could define an <code>:internal_id</code> field whose resolver
+extracts the raw, internal <code>:id</code> value from the source map/struct).</li>
+</ul>
+
+<h3 id="node-query-field">Node query field</h3>
+
+<p>Ok, so your node objects provide a global <code>:id</code>. How does Relay use it?</p>
+
+<p>Relay expects you to provide a query field called <code>node</code> that accepts a global
+ID (as arg <code>:id</code>) and returns the corresponding node object. Absinthe makes it
+easy to set this up – use the <code>node field</code> macro inside your <code>query</code>.</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="n">node</span> <span class="n">field</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span>
+      <span class="p">%{</span><span class="ss">type:</span> <span class="ss">:person</span><span class="p">,</span> <span class="ss">id:</span> <span class="n">id</span><span class="p">},</span> <span class="n">_</span> <span class="o">-&gt;</span>
+        <span class="c1"># Get the person from the DB somehow, returning a tuple</span>
+        <span class="no">YourApp</span><span class="o">.</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Person</span><span class="o">.</span><span class="n">find</span><span class="p">(%{</span><span class="ss">id:</span> <span class="n">id</span><span class="p">},</span> <span class="p">%{})</span>
+      <span class="p">%{</span><span class="ss">type:</span> <span class="ss">:business</span><span class="p">,</span> <span class="ss">id:</span> <span class="n">id</span><span class="p">},</span> <span class="n">_</span> <span class="o">-&gt;</span>
+        <span class="c1"># Get the business from @businesses</span>
+        <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nv">@businesses</span><span class="p">,</span> <span class="n">id</span><span class="p">)}</span>
+      <span class="c1"># etc.</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+  <span class="c1"># ... more queries ...</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Notice the macro prefix, `node`</figcaption>
+</figure>
+
+<p>Notice that the resolver for <code>node field</code> expects the first (args) argument to
+contain a <code>:type</code> and <code>:id</code>. These are the node object type identifier and the
+internal (non-global) ID, automatically parsed from the global ID. The resolver
+looks up the correct value using the internal ID and returns a tuple, as usual.</p>
+
+<p>For more information, see the <a href="https://hexdocs.pm/absinthe_relay/Absinthe.Relay.Node.html">documentation</a>.</p>
+
+<h3 id="converting-node-ids-to-internal-ids-for-resolvers">Converting node IDs to internal IDs for resolvers</h3>
+
+<p>If you need to parse a node (global) ID for use in a resolver, there is a
+helful utility, <code>parsing_node_ids/2</code> that is automatically imported for you.
+Here’s an example of how it works.</p>
+
+<p>Let’s assume we have a field, <code>:employees</code>, that returns a list of <code>:person</code>
+objects for a given <code>:business_id</code> – a node ID:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:employees</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:people</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">arg</span> <span class="ss">:business_id</span><span class="p">,</span> <span class="ss">:id</span>
+    <span class="n">resolve</span> <span class="o">&amp;</span><span class="n">resolve_employees</span><span class="o">/</span><span class="m">2</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="n">resolve_employees</span><span class="p">(%{</span><span class="ss">business_id:</span> <span class="n">global_id</span><span class="p">},</span> <span class="n">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># But I need an internal ID to look-up the employees!</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Somewhere in our schema</figcaption>
+</figure>
+
+<p>In <code>resolve_employees/2</code>, we could certainly parse out the internal ID manually.
+Here’s how that would look:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">def</span> <span class="n">resolve_employees</span><span class="p">(%{</span><span class="ss">business_id:</span> <span class="n">global_id</span><span class="p">},</span> <span class="n">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="ss">:business</span><span class="p">,</span> <span class="ss">id:</span> <span class="n">internal_id</span><span class="p">}}</span> <span class="o">=</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Relay</span><span class="o">.</span><span class="no">Node</span><span class="o">.</span><span class="n">from_global_id</span><span class="p">(</span><span class="n">global_id</span><span class="p">,</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">)</span>
+  <span class="c1"># TODO: find employees using internal_id, return tuple</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Manually converting the node ID to an internal ID</figcaption>
+</figure>
+
+<p>Obviously this can get a bit tedious if we have to do it often. Instead, we can
+use <code>parsing_node_ids/2</code> to <em>wrap</em> our resolver function to do the parsing for
+us, invoking our function with the internal ID instead. We just have to tell the
+<code>parsing_node_ids/2</code> what ID field arguments to parse and what the associated
+types should be:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:employees</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:people</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">arg</span> <span class="ss">:business_id</span><span class="p">,</span> <span class="ss">:id</span>
+    <span class="n">resolve</span> <span class="n">parsing_node_ids</span><span class="p">(</span><span class="o">&amp;</span><span class="n">resolve_employees</span><span class="o">/</span><span class="m">2</span><span class="p">,</span> <span class="ss">business_id:</span> <span class="ss">:business</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="n">resolve_employees</span><span class="p">(%{</span><span class="ss">business_id:</span> <span class="n">internal_id</span><span class="p">},</span> <span class="n">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="c1"># We have an internal ID!</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Somewhere in our schema</figcaption>
+</figure>
+
+<p>This leaves our resolver function virtually unchanged, and keeps our code much
+cleaner.</p>
+
+<h2 id="mutations">Mutations</h2>
+
+<p>Relay sets some specific constraints around the way arguments and results for
+mutations are structured.</p>
+
+<p>Relay expects mutations to accept exactly one argument, <code>input</code>, an
+<code>InputObject</code>. On the JavaScript side, it automatically populates a field on the
+input, <code>clientMutationId</code>, and expects to get it back, unchanged, as part of the
+result. Thankfully <code>Absinthe.Relay</code> abstracts these details away from the schema
+designer, allowing them to focus on any <em>other</em> arguments needed or results
+expected.</p>
+
+<p class="notice">
+  <strong>Important:</strong> Remember that input fields (and arguments in
+  general) cannot be of one of your <code>object</code> types. Use <code>input_object</code> to
+  model complex argument types.
+</p>
+
+<p>In this example, we accept a list of multiple <code>:person_input_object</code> values to
+insert people into a database.</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Schema</span>
+  <span class="c1"># ...</span>
+
+  <span class="n">input_object</span> <span class="ss">:person_input_object</span> <span class="k">do</span>
+    <span class="n">field</span> <span class="ss">:first_name</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span> <span class="ss">:last_name</span><span class="p">,</span> <span class="n">non_null</span><span class="p">(</span><span class="ss">:string</span><span class="p">)</span>
+    <span class="n">field</span> <span class="ss">:age</span><span class="p">,</span> <span class="ss">:integer</span>
+  <span class="k">end</span>
+
+  <span class="n">mutation</span> <span class="k">do</span>
+
+    <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">A mutation that inserts a list of persons into the database"</span>
+    <span class="n">payload</span> <span class="n">field</span> <span class="ss">:bulk_create_persons</span> <span class="k">do</span>
+      <span class="n">input</span> <span class="k">do</span>
+        <span class="n">field</span> <span class="ss">:persons</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:person_input_object</span><span class="p">)</span>
+      <span class="k">end</span>
+      <span class="n">output</span> <span class="k">do</span>
+        <span class="c1"># fields in the result</span>
+      <span class="k">end</span>
+      <span class="n">resolve</span> <span class="o">&amp;</span><span class="no">Resolver</span><span class="o">.</span><span class="no">Person</span><span class="o">.</span><span class="n">bulk_create</span><span class="o">/</span><span class="m">2</span>
+    <span class="k">end</span>
+
+    <span class="c1"># ... more mutations ...</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>Note the <code>payload</code> macro introduces a Relay mutation, <code>input</code> defines the fields
+(inside the <code>input</code> argument), and <code>output</code> defines the fields available as part
+of the result.</p>
+
+<p>See the <a href="https://hexdocs.pm/absinthe_relay/Absinthe.Relay.Mutation.html">documentation on Absinthe.Relay.Mutation</a>
+for more information.</p>
+
+<h3 id="referencing-existing-nodes-in-mutation-inputs">Referencing existing nodes in mutation inputs</h3>
+
+<p>Occasionally, your client may wish to make reference to an existing node in the
+mutation input (this happens particularly when manipulating the connection edges
+of a parent node).</p>
+
+<p>Incoming IDs for node types may have to be converted to their internal
+equivalents so you can persist changes to your backend. For this purpose, you
+can use <code>Absinthe.Relay.Node.from_global_id/2</code> to parse node (global) IDs
+manually.</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">def</span> <span class="n">bulk_create</span><span class="p">(%{</span><span class="ss">persons:</span> <span class="n">new_persons</span><span class="p">,</span> <span class="ss">group:</span> <span class="n">global_group_id</span><span class="p">},</span> <span class="n">_</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="p">%{</span><span class="ss">type:</span> <span class="ss">:group</span><span class="p">,</span> <span class="ss">id:</span> <span class="n">internal_group_id</span><span class="p">}}</span> <span class="o">=</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Relay</span><span class="o">.</span><span class="no">Node</span><span class="o">.</span><span class="n">from_global_id</span><span class="p">(</span><span class="n">global_group_id</span><span class="p">,</span> <span class="no">YourApp</span><span class="o">.</span><span class="no">Schema</span><span class="p">)</span><span class="err">`</span>
+  <span class="c1"># ... manipulate your DB using internal_group_id</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">Converting a global id to an internal one</figcaption>
+</figure>
+
+<p>If, of course, your client knows the internal IDs (in a peer field to <code>:id</code>, eg,
+<code>:internal_id</code>), you can depends on that ID – but we recommend that you use
+node IDs as they are opaque values and it’s the more conventional practice.</p>
+
+<p class="notice">
+  <strong>Important:</strong> When using <code>from_global_id</code>, remember to always
+  match the <code>:type</code> value to ensure the internal ID is for the type you expect,
+  and a global ID for the wrong type of node hasn't been mistakenly sent to the
+  server.
+</p>
+
+<h2 id="connections">Connections</h2>
+
+<p>Check the <a href="https://hexdocs.pm/absinthe_relay/Absinthe.Relay.Connection.html">documentation</a>
+for details on connections.</p>
 
     </article>
 
