@@ -83,13 +83,13 @@ or an email as the contact method for a user.</p>
 
 <figure class="codeblock"><pre><code class="language-graphql highlight"><span class="c1">#description "User with email"</span>
 <span class="k">mutation</span> <span class="n">CreateEmailUser</span> <span class="err">{</span>
-  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">email"</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">foo@bar.com"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="n">EMAIL</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">foo@bar.com"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
 <span class="err">}</span></code></pre>
 </figure>
 
 <figure class="codeblock"><pre><code class="language-graphql highlight"><span class="c1">#description "User with phone number"</span>
 <span class="k">mutation</span> <span class="n">CreatePhoneUser</span> <span class="err">{</span>
-  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="sd">"</span><span class="s2">phone"</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">867-5309"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
+  <span class="n">user</span><span class="err">(</span><span class="ss">contact:</span> <span class="err">{</span><span class="ss">type:</span> <span class="n">PHONE</span><span class="err">,</span> <span class="ss">value:</span> <span class="sd">"</span><span class="s2">867-5309"</span><span class="err">},</span> <span class="ss">password:</span> <span class="sd">"</span><span class="s2">hunter2"</span><span class="err">)</span>
 <span class="err">}</span></code></pre>
 </figure>
 
@@ -105,7 +105,8 @@ specify this in our schema.</p>
 
 <figure class="codeblock"><figcaption class="filename">web/schema/types.ex</figcaption>
 <pre><code class="language-graphql highlight"><span class="k">enum</span> <span class="ss">:contact_type</span> <span class="n">do</span>
-  <span class="n">values</span> <span class="err">~</span><span class="n">w</span><span class="err">(</span><span class="n">phone</span> <span class="n">email</span><span class="err">)</span><span class="n">a</span>
+  <span class="n">value</span> <span class="ss">:phone</span>
+  <span class="n">value</span> <span class="ss">:email</span>
 <span class="n">end</span></code></pre>
 </figure>
 
