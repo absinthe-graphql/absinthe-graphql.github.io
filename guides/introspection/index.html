@@ -58,7 +58,7 @@
     
       <li class="with-after"><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
     
-      <li class="with-after"><a href='/guides/context/'>Context</a></li>
+      <li class="with-after"><a href='/guides/context-and-authentication/'>Context and Authentication</a></li>
     
       <li class="with-after"><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
     
@@ -197,14 +197,14 @@ for how to install that library. Once installed, usage is simple as</p>
 router, simply do</p>
 
 <figure class="codeblock"><figcaption class="filename">router.ex</figcaption>
-<pre><code class="language-elixir highlight"><span class="n">get</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
+<pre><code class="language-elixir highlight"><span class="n">forward</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span></code></pre>
 </figure>
 
 <p>This can be trivially reserved to just the <code>:dev</code> elixir environment by doing:</p>
 
 <figure class="codeblock"><figcaption class="filename">router.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="k">if</span> <span class="no">Mix</span><span class="o">.</span><span class="n">env</span> <span class="o">==</span> <span class="ss">:dev</span> <span class="k">do</span>
-  <span class="n">get</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span>
+  <span class="n">forward</span> <span class="sd">"</span><span class="s2">/graphiql"</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">GraphiQL</span><span class="p">,</span> <span class="ss">schema:</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span>
 <span class="k">end</span></code></pre>
 </figure>
 

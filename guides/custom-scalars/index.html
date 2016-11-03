@@ -58,7 +58,7 @@
     
       <li class="with-after"><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
     
-      <li class="with-after"><a href='/guides/context/'>Context</a></li>
+      <li class="with-after"><a href='/guides/context-and-authentication/'>Context and Authentication</a></li>
     
       <li class="with-after"><a href='/guides/custom-scalars/' class="active">Custom Scalars</a></li>
     
@@ -97,7 +97,7 @@ providing <code>parse</code> and <code>serialize</code> functions.</p>
 <p>Here’s a simple scalar definition:</p>
 
 <figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
-  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
   <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
 </figure>
@@ -112,17 +112,17 @@ structs.</p>
  `:name` option. In this example, our scalar type is automatically assigned `Time`).
  </p>
 
-<p>This method of definining scalars isn’t anything special, either. It’s exactly
+<p>This method of defining scalars isn’t anything special, either. It’s exactly
 how the built-in scalars <code>Int</code>, <code>String</code>, <code>Float</code>, <code>ID</code>, and <code>Boolean</code> are defined.</p>
 
 <h3 id="the-parse-function">The parse function</h3>
 
-<p>The function provided to <code>parse</code> takes the raw value from GraphQL and returns a
+<p>The function provided to <code>parse</code> takes the blueprint node from Absinthe and returns a
 tuple – either <code>{:ok, value}</code> or <code>{:error, reason}</code>. Any errors during parsing
 will be returned to the user as part of the response.</p>
 
 <p>In the <code>:time</code> example above, <code>Timex.DateFormat.parse/2</code> handles this for us; we
-just wrap it and provide the date format (`ISOz’).</p>
+just wrap it and provide the date format (<code>ISOz</code>).</p>
 
 <h3 id="the-serialize-function">The serialize function</h3>
 
@@ -143,7 +143,7 @@ datetime format (that is, the ISO 8601 format without the timezone offset, eg,
 "2015-06-24T04:50:34Z").
 """</span>
 <span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
-  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
   <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
 </figure>

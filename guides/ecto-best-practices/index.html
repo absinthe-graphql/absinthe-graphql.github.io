@@ -58,7 +58,7 @@
     
       <li class="with-after"><a href='/guides/plug-phoenix/'>Plug and Phoenix</a></li>
     
-      <li class="with-after"><a href='/guides/context/'>Context</a></li>
+      <li class="with-after"><a href='/guides/context-and-authentication/'>Context and Authentication</a></li>
     
       <li class="with-after"><a href='/guides/custom-scalars/'>Custom Scalars</a></li>
     
@@ -92,13 +92,12 @@ we can point out now that might be helpful.</p>
 <p>In general, you want to make sure that when accessing Ecto associations that you
 preload the data in the top level resolver functions to avoid N+1 queries.</p>
 
-<p>Imagine this scenario: You have posts and categories. Categories can have a
-parent category. You want to list all categories, and if they have a parent,
-include that along with its name.</p>
+<p>Imagine this scenario: You have posts and users. A Post has an author field, which
+returns a user. You want to list all posts, and get the name of their author</p>
 
 <figure class="codeblock"><pre><code class="language-graphql highlight"><span class="err">{</span>
-  <span class="n">categories</span> <span class="err">{</span>
-    <span class="n">parent</span> <span class="err">{</span>
+  <span class="n">posts</span> <span class="err">{</span>
+    <span class="n">author</span> <span class="err">{</span>
       <span class="n">name</span>
     <span class="err">}</span>
   <span class="err">}</span>
@@ -108,20 +107,24 @@ include that along with its name.</p>
 
 <p>If you write your schema like this, you’re going to have a <em>bad</em> time:</p>
 
-<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:category</span> <span class="k">do</span>
-  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Parent category to the existing category"</span>
-  <span class="n">field</span> <span class="ss">:parent</span><span class="p">,</span> <span class="ss">:category</span> <span class="k">do</span>
-    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="p">%{</span><span class="ss">source:</span> <span class="n">category</span><span class="p">}</span> <span class="o">-&gt;</span>
-      <span class="c1"># exact mechanism unimportant</span>
-      <span class="n">query_parent</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Author of the post"</span>
+  <span class="n">field</span> <span class="ss">:author</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">post</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="n">author</span> <span class="o">=</span>
+        <span class="n">post</span>
+        <span class="o">|&gt;</span> <span class="no">Ecto</span><span class="o">.</span><span class="n">assoc</span><span class="p">(</span><span class="ss">:author</span><span class="p">)</span>
+        <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">one</span>
+
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">author</span><span class="p">}</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span>
 
 <span class="n">query</span> <span class="k">do</span>
-  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:posts</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:post</span><span class="p">)</span> <span class="k">do</span>
     <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
-      <span class="no">Category</span> <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Post</span> <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">}</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
@@ -130,64 +133,80 @@ include that along with its name.</p>
 
 <p>What this schema will do when presented with the GraphQL query is
 run <code>Category |&gt; Repo.all</code>, which will retrieve <em>N</em> categories. Then for each
-<em>N</em> category it will resolve child fields, which runs our <code>query_parent(category)</code>
+<em>N</em> category it will resolve child fields, which runs our <code>Repo.one</code> query
 function, resulting in <em>N+1</em> calls to the database.</p>
 
-<p>Instead, structure your schema in such a way that you can preload all desired
-data:</p>
+<p>Instead, use batching! At the moment (Oct-31-2016) Batching is pretty new, so we
+don’t yet have some of the helper functions we want to in order to make this easier.</p>
 
-<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:category</span> <span class="k">do</span>
-  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Parent category to the existing category"</span>
-  <span class="n">field</span> <span class="ss">:parent</span><span class="p">,</span> <span class="ss">:category</span>
-<span class="k">end</span>
+<p>Fortunately the batching API is pretty simple. The idea with batching is that we’re
+gonna aggregate all the <code>author_id</code>s from each post, and then make one call to the user.</p>
 
-<span class="n">query</span> <span class="k">do</span>
-  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
-    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
-      <span class="no">Category</span>
-      <span class="o">|&gt;</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">preload</span><span class="p">(</span><span class="ss">:parent</span><span class="p">)</span>
-      <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+<p>Let’s first make a function to get a model by ids.</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Helpers</span> <span class="k">do</span>
+  <span class="k">def</span> <span class="n">by_id</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">ids</span><span class="p">)</span> <span class="k">do</span>
+    <span class="kn">import</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span>
+    <span class="n">model</span>
+    <span class="o">|&gt;</span> <span class="n">where</span><span class="p">([</span><span class="n">m</span><span class="p">],</span> <span class="n">m</span><span class="o">.</span><span class="n">id</span> <span class="ow">in</span> <span class="o">^</span><span class="n">ids</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
+    <span class="o">|&gt;</span> <span class="no">Map</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="o">&amp;</span><span class="p">{</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="nv">&amp;1</span><span class="p">})</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+</figure>
+
+<p>Now we can use this function to batch our author lookups:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
+  <span class="nv">@desc</span> <span class="sd">"</span><span class="s2">Author of the post"</span>
+  <span class="n">field</span> <span class="ss">:author</span><span class="p">,</span> <span class="ss">:user</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">post</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">-&gt;</span>
+      <span class="n">batch</span><span class="p">({</span><span class="no">MyApp</span><span class="o">.</span><span class="no">Schema</span><span class="o">.</span><span class="no">Helpers</span><span class="p">,</span> <span class="ss">:by_id</span><span class="p">,</span> <span class="no">User</span><span class="p">},</span> <span class="n">post</span><span class="o">.</span><span class="n">author_id</span><span class="p">,</span> <span class="k">fn</span> <span class="n">batch_results</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">batch_results</span><span class="p">,</span> <span class="n">post</span><span class="o">.</span><span class="n">author_id</span><span class="p">)}</span>
+      <span class="k">end</span><span class="p">)</span>
     <span class="k">end</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
-<figcaption class="description">Always preloading the parent.</figcaption>
+<figcaption class="description">Batch loading users.</figcaption>
 </figure>
 
-<p>Now we always make 2 calls to the database; once to load all queries, and then
-a second time to handle the preload.</p>
+<p>Now we make just two calls to the database. The first call loads all of the posts.
+Then as Absinthe walks through each post and tries to get the author, it’s instead
+told to aggregate its information.</p>
 
-<p>Astute readers will note that there’s a downside here. We load the parent from
-the database regardless of whether the GraphQL query asks for it (and,
-therefore, regardless of whether Absinthe will return it in the response).</p>
+<p>That aggregate information is passed on to our <code>by_id/2</code> function from earlier.
+It grabs ALL the users in just one database call, and creates a map of user ids
+to users.</p>
 
-<p>It’d be nice if we could only query the database when the parent is asked for.</p>
+<p>Absinthe then does a second pass and calls the <code>batch_results</code> function with that
+map, letting us retrieve the individual author for each post.</p>
 
-<h2 id="its-diy-for-now">It’s DIY (For Now)</h2>
+<p>Not only is this a very efficient way to query the data, it’s also 100% dynamic.
+If a query document asks for authors, they’re loaded efficiently. If it does not,
+they aren’t loaded at all.</p>
 
-<p>Supporting this feature more automatically is on the <a href="/roadmap">roadmap</a>, but
-here’s the approach:</p>
+<p>See FIXME link</p>
 
-<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">query</span> <span class="k">do</span>
-  <span class="n">field</span> <span class="ss">:categories</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:category</span><span class="p">)</span> <span class="k">do</span>
-    <span class="n">resolve</span> <span class="k">fn</span> <span class="n">_</span><span class="p">,</span> <span class="n">info</span> <span class="o">-&gt;</span>
-      <span class="n">preloads</span> <span class="o">=</span> <span class="n">derive_preloads</span><span class="p">(</span><span class="n">info</span><span class="p">)</span>
-      <span class="no">Category</span>
-      <span class="o">|&gt;</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="o">.</span><span class="n">preload</span><span class="p">(</span><span class="o">^</span><span class="n">preloads</span><span class="p">)</span>
-      <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">all</span>
-    <span class="k">end</span>
-  <span class="k">end</span>
+<h2 id="the-future">The Future</h2>
+
+<p>The <code>batch</code> API above is a bit verbose. This verbosity happens because it’s very
+generic, so you gotta give it the individual bits and pieces. However for Ecto
+associations specifically, you can easily see how the code we have above could be
+made more succinct by using information we already have on our Ecto schemas.</p>
+
+<p>Thus what we hope to have soon in Absinthe.Ecto (doesn’t exist yet) are functions
+that let you do something like:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:post</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:name</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="n">field</span> <span class="ss">:author</span><span class="p">,</span> <span class="ss">:user</span><span class="p">,</span> <span class="ss">resolve:</span> <span class="n">belongs_to</span><span class="p">(</span><span class="no">User</span><span class="p">,</span> <span class="ss">:author</span><span class="p">)</span>
+  <span class="n">field</span> <span class="ss">:comments</span><span class="p">,</span> <span class="n">list_of</span><span class="p">(</span><span class="ss">:comment</span><span class="p">),</span> <span class="ss">resolve:</span> <span class="n">has_many</span><span class="p">(</span><span class="no">Comment</span><span class="p">)</span>
 <span class="k">end</span></code></pre>
-<figcaption class="description">The sneaky approach. Coming soon!</figcaption>
 </figure>
 
-<p>In this example, <code>derive_preloads/1</code> takes the second argument to the resolver
-(a <a href="https://hexdocs.pm/absinthe/Absinthe.Execution.Field.html">Absinthe.Execution.Field</a>
-struct), which contains the current <code>ast_node</code> – using this, we can peek ahead
-and see what child fields will be asked for, then return the preloads that are
-actually needed.</p>
-
-<p>Sounds simple, right? The devil is in the details, but we hope to be able to
-release this soon as part of a new <code>Absinthe.Ecto</code> project.</p>
+<p>This <code>belongs_to</code> function would derive the right batching approach based on the
+Ecto association. These functions are mere conveniences. Everything they would do
+functionally is available to you today!</p>
 
     </article>
 
