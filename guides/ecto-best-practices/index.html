@@ -132,8 +132,8 @@ returns a user. You want to list all posts, and get the name of their author</p>
 </figure>
 
 <p>What this schema will do when presented with the GraphQL query is
-run <code>Category |&gt; Repo.all</code>, which will retrieve <em>N</em> categories. Then for each
-<em>N</em> category it will resolve child fields, which runs our <code>Repo.one</code> query
+run <code>Post |&gt; Repo.all</code>, which will retrieve <em>N</em> posts. Then for each
+post it will resolve child fields, which runs our <code>Repo.one</code> query
 function, resulting in <em>N+1</em> calls to the database.</p>
 
 <p>Instead, use batching! At the moment (Oct-31-2016) Batching is pretty new, so we
