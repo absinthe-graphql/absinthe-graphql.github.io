@@ -172,7 +172,11 @@ out to some unspecified authentication mechanism.</p>
 
 <figure class="codeblock"><pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">MyApp</span><span class="o">.</span><span class="no">Web</span><span class="o">.</span><span class="no">Context</span> <span class="k">do</span>
   <span class="nv">@behaviour</span> <span class="no">Plug</span>
+
   <span class="kn">import</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Conn</span>
+  <span class="kn">import</span> <span class="no">Ecto</span><span class="o">.</span><span class="no">Query</span><span class="p">,</span> <span class="ss">only:</span> <span class="p">[</span><span class="ss">where:</span> <span class="m">2</span><span class="p">]</span>
+
+  <span class="n">alias</span> <span class="no">MyApp</span><span class="o">.</span><span class="p">{</span><span class="no">Repo</span><span class="p">,</span> <span class="no">User</span><span class="p">}</span>
 
   <span class="k">def</span> <span class="n">init</span><span class="p">(</span><span class="n">opts</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">opts</span>
 
@@ -181,9 +185,13 @@ out to some unspecified authentication mechanism.</p>
       <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">context</span><span class="p">}</span> <span class="o">-&gt;</span>
         <span class="n">put_private</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="ss">:absinthe</span><span class="p">,</span> <span class="p">%{</span><span class="ss">context:</span> <span class="n">context</span><span class="p">})</span>
       <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">reason</span><span class="p">}</span> <span class="o">-&gt;</span>
-        <span class="n">send_resp</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="m">403</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="n">conn</span>
+        <span class="o">|&gt;</span> <span class="n">send_resp</span><span class="p">(</span><span class="m">403</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="o">|&gt;</span> <span class="n">halt</span><span class="p">()</span>
       <span class="n">_</span> <span class="o">-&gt;</span>
-        <span class="n">send_resp</span><span class="p">(</span><span class="n">conn</span><span class="p">,</span> <span class="m">400</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="n">conn</span>
+        <span class="o">|&gt;</span> <span class="n">send_resp</span><span class="p">(</span><span class="m">400</span><span class="p">,</span> <span class="sd">"</span><span class="s2">Bad Request"</span><span class="p">)</span>
+        <span class="o">|&gt;</span> <span class="n">halt</span><span class="p">()</span>
     <span class="k">end</span>
   <span class="k">end</span>
 
