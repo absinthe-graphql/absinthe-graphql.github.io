@@ -74,6 +74,8 @@
     
       <li class="with-after"><a href='/guides/relay/'>Relay</a></li>
     
+      <li class="with-after"><a href='/guides/complexity-analysis/'>Complexity Analysis</a></li>
+    
   </ol>
 </nav>
 
@@ -107,8 +109,7 @@ eg, <a href="https://hex.pm/packages/poison">Poison</a>:</p>
 you should plug Absinthe.Plug after Plug.Parsers.</p>
 
 <figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">plug</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Parsers</span><span class="p">,</span>
-  <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">],</span>
-  <span class="ss">pass:</span> <span class="p">[</span><span class="sd">"</span><span class="s2">*/*"</span><span class="p">],</span>
+  <span class="ss">parsers:</span> <span class="p">[</span><span class="ss">:urlencoded</span><span class="p">,</span> <span class="ss">:multipart</span><span class="p">,</span> <span class="ss">:json</span><span class="p">,</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="o">.</span><span class="no">Parser</span><span class="p">],</span>
   <span class="ss">json_decoder:</span> <span class="no">Poison</span>
 
 <span class="n">plug</span> <span class="no">Absinthe</span><span class="o">.</span><span class="no">Plug</span><span class="p">,</span>
@@ -161,7 +162,7 @@ like:</p>
 on to <code>Absinthe.run</code> as the context. This is how you should handle logic that
 uses headers – most notably, Authentication.</p>
 
-<p>For more information, see the <a href="/guides/context/">Context guide</a>.</p>
+<p>For more information, see the <a href="/guides/context-and-authentication/">Context guide</a>.</p>
 
 <h2 id="graphiql">GraphiQL</h2>
 
