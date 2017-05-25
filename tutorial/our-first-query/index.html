@@ -138,7 +138,7 @@ set of posts.</p>
 <figure class="codeblock"><figcaption class="filename">web/resolvers/post_resolver.ex</figcaption>
 <pre><code class="language-elixir highlight"><span class="k">defmodule</span> <span class="no">Blog</span><span class="o">.</span><span class="no">PostResolver</span> <span class="k">do</span>
   <span class="k">def</span> <span class="n">all</span><span class="p">(</span><span class="n">_args</span><span class="p">,</span> <span class="n">_info</span><span class="p">)</span> <span class="k">do</span>
-    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="no">Post</span><span class="p">)}</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="no">Blog</span><span class="o">.</span><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="no">Blog</span><span class="o">.</span><span class="no">Post</span><span class="p">)}</span>
   <span class="k">end</span>
 <span class="k">end</span></code></pre>
 </figure>
