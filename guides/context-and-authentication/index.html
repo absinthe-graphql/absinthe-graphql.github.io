@@ -209,7 +209,7 @@ out to some unspecified authentication mechanism.</p>
 
   <span class="k">defp</span> <span class="n">authorize</span><span class="p">(</span><span class="n">token</span><span class="p">)</span> <span class="k">do</span>
     <span class="no">User</span>
-    <span class="o">|&gt;</span> <span class="n">where</span><span class="p">(</span><span class="ss">token:</span> <span class="n">token</span><span class="p">)</span>
+    <span class="o">|&gt;</span> <span class="n">where</span><span class="p">(</span><span class="ss">token:</span> <span class="o">^</span><span class="n">token</span><span class="p">)</span>
     <span class="o">|&gt;</span> <span class="no">Repo</span><span class="o">.</span><span class="n">one</span>
     <span class="o">|&gt;</span> <span class="k">case</span> <span class="k">do</span>
       <span class="no">nil</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="sd">"</span><span class="s2">invalid authorization token"</span><span class="p">}</span>
