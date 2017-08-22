@@ -372,8 +372,60 @@ node IDs as they are opaque values and it’s the more conventional practice.</p
 
 <h2 id="connections">Connections</h2>
 
+<p>One of the more popular features of Relay is the rich pagination support provided by its
+connections. <a href="https://dev-blog.apollodata.com/explaining-graphql-connections-c48b7c3d6976">This medium post</a>
+has a good explaination of the full feature set and nomenclature.</p>
+
+<p>For example, you could define a connection for paginating <code>:location</code> objects with:</p>
+
+<p><code>connection node_type: :location</code></p>
+
+<p>This will automatically define two new types: <code>:location_connection</code> and <code>:location_edge</code>.</p>
+
+<p>We define a field that uses these types to paginate associated records by using
+<code>connection field</code>. Here, for instance, we support paginating a business’s locations:</p>
+
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">object</span> <span class="ss">:business</span> <span class="k">do</span>
+  <span class="n">field</span> <span class="ss">:short_name</span><span class="p">,</span> <span class="ss">:string</span>
+  <span class="n">connection</span> <span class="n">field</span> <span class="ss">:locations</span><span class="p">,</span> <span class="ss">node_type:</span> <span class="ss">:location</span> <span class="k">do</span>
+    <span class="n">resolve</span> <span class="k">fn</span>
+      <span class="n">pagination_args</span><span class="p">,</span> <span class="p">%{</span><span class="ss">source:</span> <span class="n">business</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="no">Location</span>
+        <span class="o">|&gt;</span> <span class="n">where</span><span class="p">(</span><span class="ss">business_id:</span> <span class="o">^</span><span class="n">business</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="o">|&gt;</span> <span class="n">order_by</span><span class="p">(</span><span class="ss">:inserted_at</span><span class="p">)</span>
+        <span class="o">|&gt;</span> <span class="no">Connection</span><span class="o">.</span><span class="n">from_query</span><span class="p">(</span><span class="o">&amp;</span><span class="no">Repo</span><span class="o">.</span><span class="n">all</span><span class="o">/</span><span class="m">1</span><span class="p">,</span> <span class="n">pagination_args</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span></code></pre>
+<figcaption class="description">somewhere in types.ex</figcaption>
+</figure>
+
+<p>We are piping a query for the associated locations into <code>from_query/3</code> along with the default
+relay pagination arguments that allow for pagination. For example, to get just the first 10
+locations, use the <code>first</code> argument:</p>
+
+<figure class="codeblock"><pre><code class="language-graphql highlight"><span class="k">query</span> <span class="err">{</span>
+  <span class="n">business</span><span class="err">(</span><span class="ss">id:</span><span class="sd">"</span><span class="s2">9ea6605e-e6c8-44ea-98d0-1fe6276e193d"</span><span class="err">)</span> <span class="err">{</span>
+    <span class="n">shortName</span>
+    <span class="n">locations</span><span class="err">(</span><span class="ss">first:</span><span class="m">10</span><span class="err">)</span> <span class="err">{</span>
+      <span class="n">edges</span>
+        <span class="n">node</span> <span class="err">{</span>
+          <span class="n">address1</span>
+          <span class="n">city</span>
+        <span class="err">}</span>
+      <span class="err">}</span>
+    <span class="err">}</span>
+  <span class="err">}</span>
+<span class="err">}</span></code></pre>
+</figure>
+
 <p>Check the <a href="https://hexdocs.pm/absinthe_relay/Absinthe.Relay.Connection.html">documentation</a>
-for details on connections.</p>
+for more details on connections.</p>
+
+<p class="notice">
+  <strong>Note:</strong> These features do not require using Relay on the client as Apollo
+  and other client implementations generally support Relay connection configuration.
+</p>
 
     </article>
 

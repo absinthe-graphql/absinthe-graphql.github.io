@@ -98,14 +98,21 @@ providing <code>parse</code> and <code>serialize</code> functions.</p>
 
 <p>Here’s a simple scalar definition:</p>
 
-<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
-  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
-  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+<figure class="codeblock"><pre><code class="language-elixir highlight"><span class="n">scalar</span> <span class="ss">:date</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISO8601 time"</span> <span class="k">do</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="n">parse_date</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">DateTime</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="no">DateTime</span><span class="o">.</span><span class="n">from_iso8601</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">val</span><span class="p">}</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="ss">:error</span>
+  <span class="k">end</span>
 <span class="k">end</span></code></pre>
 </figure>
 
-<p>This creates a new scalar type, <code>:time</code> that converts between external string
-times in ISOz format and internal <a href="https://github.com/bitwalker/timex">Timex</a>
+<p>This creates a new scalar type, <code>:date</code> that converts between external string
+times in ISO8601 format and internal <a href="https://hexdocs.pm/elixir/DateTime.html#t:t/0">DateTime</a>
 structs.</p>
 
 <p class="notice">
@@ -120,18 +127,18 @@ how the built-in scalars <code>Int</code>, <code>String</code>, <code>Float</cod
 <h3 id="the-parse-function">The parse function</h3>
 
 <p>The function provided to <code>parse</code> takes the blueprint node from Absinthe and returns a
-tuple – either <code>{:ok, value}</code> or <code>{:error, reason}</code>. Any errors during parsing
+tuple – either <code>{:ok, value}</code> or <code>:error</code>. Any errors during parsing
 will be returned to the user as part of the response.</p>
 
-<p>In the <code>:time</code> example above, <code>Timex.DateFormat.parse/2</code> handles this for us; we
-just wrap it and provide the date format (<code>ISOz</code>).</p>
+<p>In the <code>:date</code> example above, we’re wrapping <code>DateTime.from_iso8601/1</code> in the <code>parse_date/1</code>
+function to get the right return values.</p>
 
 <h3 id="the-serialize-function">The serialize function</h3>
 
 <p>The function provided to <code>serialize</code> takes the internal value and serializes it
 to the type that will be inserted into the result.</p>
 
-<p>In the <code>:time</code> example above, <code>Time.DateFormat.format!</code> handles us for this,
+<p>In the <code>:date</code> example above, <code>DateTime.to_string/1</code> handles this for us,
 serializing it to the same format that <code>parse</code> expects as input.</p>
 
 <h3 id="dont-forget-your-description">Don’t forget your description</h3>
@@ -140,13 +147,19 @@ serializing it to the same format that <code>parse</code> expects as input.</p>
 with the constraints your <code>parse</code> function may place on incoming values.</p>
 
 <figure class="codeblock"><pre><code class="language-elixir highlight"><span class="nv">@desc</span> <span class="sd">"""
-The `Time` scalar type represents time values provided in the ISOz
-datetime format (that is, the ISO 8601 format without the timezone offset, eg,
-"2015-06-24T04:50:34Z").
+The `Date` scalar type represents time values provided in the ISO8601
+datetime format (e.g. "2015-06-24T04:50:34Z").
 """</span>
-<span class="n">scalar</span> <span class="ss">:time</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISOz time"</span> <span class="k">do</span>
-  <span class="n">parse</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
-  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">Timex</span><span class="o">.</span><span class="no">DateFormat</span><span class="o">.</span><span class="n">format!</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">,</span> <span class="sd">"</span><span class="s2">{ISOz}"</span><span class="p">)</span>
+<span class="n">scalar</span> <span class="ss">:date</span><span class="p">,</span> <span class="ss">description:</span> <span class="sd">"</span><span class="s2">ISO8601 time"</span> <span class="k">do</span>
+  <span class="n">parse</span> <span class="o">&amp;</span><span class="n">parse_date</span><span class="p">(</span><span class="nv">&amp;1</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+  <span class="n">serialize</span> <span class="o">&amp;</span><span class="no">DateTime</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="nv">&amp;1</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="k">def</span> <span class="n">parse_date</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="no">DateTime</span><span class="o">.</span><span class="n">from_iso8601</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">val</span><span class="p">}</span>
+    <span class="p">{</span><span class="ss">:error</span><span class="p">,</span> <span class="n">_</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="ss">:error</span>
+  <span class="k">end</span>
 <span class="k">end</span></code></pre>
 </figure>
 
